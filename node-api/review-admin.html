@@ -200,7 +200,7 @@ async function loadQueue() {
     const items = await res.json();
 
     badge.innerHTML = items.length
-      ? `<b>\${items.length}</b> pending`
+      ? `<b>${items.length}</b> pending`
       : "semua beres";
 
     if (!items.length) {
@@ -216,7 +216,7 @@ async function loadQueue() {
       list.appendChild(renderCard(item));
     }
   } catch (err) {
-    list.innerHTML = `<div class="state-msg">Gagal memuat: \${err.message}</div>`;
+    list.innerHTML = `<div class="state-msg">Gagal memuat: ${err.message}</div>`;
     badge.textContent = "error";
   }
 }
@@ -227,21 +227,21 @@ function renderCard(item) {
   card.innerHTML = `
     <div class="card-top">
       <div class="metric">
-        <span>jarak <b>\${item.distance_m}m</b></span>
-        <span>kemiripan nama <b>\${item.name_similarity}</b></span>
+        <span>jarak <b>${item.distance_m}m</b></span>
+        <span>kemiripan nama <b>${item.name_similarity}</b></span>
       </div>
     </div>
     <div class="compare">
       <div class="halte">
-        <div class="nama">\${escapeHtml(item.nama_a)}</div>
-        <div class="koridor">Koridor \${escapeHtml(item.koridor_a)}</div>
-        <div class="coord">\${item.lat_a}, \${item.lng_a}</div>
+        <div class="nama">${escapeHtml(item.nama_a)}</div>
+        <div class="koridor">Koridor ${escapeHtml(item.koridor_a)}</div>
+        <div class="coord">${item.lat_a}, ${item.lng_a}</div>
       </div>
       <div class="vs">vs</div>
       <div class="halte">
-        <div class="nama">\${escapeHtml(item.nama_b)}</div>
-        <div class="koridor">Koridor \${escapeHtml(item.koridor_b)}</div>
-        <div class="coord">\${item.lat_b}, \${item.lng_b}</div>
+        <div class="nama">${escapeHtml(item.nama_b)}</div>
+        <div class="koridor">Koridor ${escapeHtml(item.koridor_b)}</div>
+        <div class="coord">${item.lat_b}, ${item.lng_b}</div>
       </div>
     </div>
     <div class="actions">
