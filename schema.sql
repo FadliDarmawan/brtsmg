@@ -112,11 +112,16 @@ CREATE TABLE koridor_halte (
   halte_master_id   BIGINT,
 
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
-
-  UNIQUE (koridor_id, no_urut)
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- CATATAN: kolom "No" di excel sumber TERNYATA gak dijamin unik per koridor
+-- (koridor 7 Genuk-Pengapon, misalnya, punya 11 angka yang kepake berkali-kali
+-- buat halte yang beda-beda -- kemungkinan human error pas input data lapangan,
+-- bukan bug parsing). Jadi ini SENGAJA index biasa, BUKAN unique constraint --
+-- upload.js juga gak butuh uniqueness ini buat logic-nya (dia DELETE semua
+-- baris koridor itu dulu baru INSERT ulang, bukan pakai ON CONFLICT/upsert).
+CREATE INDEX idx_koridor_halte_koridor_no_urut ON koridor_halte(koridor_id, no_urut);
 CREATE INDEX idx_koridor_halte_koridor_id ON koridor_halte(koridor_id);
 CREATE INDEX idx_koridor_halte_halte_master_id ON koridor_halte(halte_master_id);
 CREATE INDEX idx_koridor_halte_latlng ON koridor_halte(lat, lng);  -- bantu query bounding-box saat merge

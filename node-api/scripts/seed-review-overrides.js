@@ -24,12 +24,24 @@ const OVERRIDES_FILE = path.join(__dirname, "..", "overrides_applied.json");
 
 async function resolveId(client, sheetName, noUrut) {
   const { rows } = await client.query(
-    `SELECT kh.id
+    `SELECT kh.id, kh.nama_halte
      FROM koridor_halte kh
      JOIN koridor k ON k.id = kh.koridor_id
      WHERE k.sheet_name_asal = $1 AND kh.no_urut = $2`,
     [sheetName, noUrut]
   );
+  if (rows.length > 1) {
+    // Kolom "No" di excel sumber TERNYATA gak dijamin unik per koridor
+    // (lihat catatan di schema.sql -- koridor 7 Genuk-Pengapon jadi contoh
+    // nyata). Mending gagal loud di sini daripada diam-diam pilih rows[0]
+    // yang urutannya gak dijamin sama tiap query -- override bisa nyantol
+    // ke halte yang SALAH tanpa ketauan.
+    throw new Error(
+      `Ambigu: (${sheetName}, no_urut=${noUrut}) cocok ${rows.length} baris -- ` +
+      `${rows.map((r) => `id=${r.id} "${r.nama_halte}"`).join(", ")}. ` +
+      `Perlu disambiguasi manual (cek nama_halte-nya di DB, lalu resolve override ini langsung lewat /api/review-resolve pakai id yang benar).`
+    );
+  }
   return rows[0]?.id ?? null;
 }
 
@@ -49,8 +61,17 @@ async function main() {
       const [sheetA, noUrutA] = ov.a;
       const [sheetB, noUrutB] = ov.b;
 
-      const idA = await resolveId(client, sheetA, noUrutA);
-      const idB = await resolveId(client, sheetB, noUrutB);
+      let idA, idB;
+      try {
+        idA = await resolveId(client, sheetA, noUrutA);
+        idB = await resolveId(client, sheetB, noUrutB);
+      } catch (err) {
+        // Ambigu (no_urut duplikat di koridor itu, lihat catatan resolveId)
+        // -- jangan gagalin SELURUH seed cuma gara-gara 1 override,
+        // catat aja & lanjut ke override berikutnya.
+        unresolved.push({ ...ov, error: err.message });
+        continue;
+      }
 
       if (idA == null || idB == null) {
         unresolved.push({ ...ov, resolved: { idA, idB } });
@@ -75,9 +96,10 @@ async function main() {
 
   console.log(`Berhasil di-seed: ${inserted}/${overrides.length}`);
   if (unresolved.length) {
-    console.log(`\n⚠️  ${unresolved.length} override GAK ketemu row-nya di DB (mungkin belum diupload / nama sheet beda):`);
+    console.log(`\n⚠️  ${unresolved.length} override gagal di-seed:`);
     for (const u of unresolved) {
-      console.log(`   ${JSON.stringify(u.a)} <-> ${JSON.stringify(u.b)} [${u.decision}] -> resolved=${JSON.stringify(u.resolved)}`);
+      const reason = u.error ? `AMBIGU: ${u.error}` : `resolved=${JSON.stringify(u.resolved)} (kemungkinan row-nya belum diupload / nama sheet beda)`;
+      console.log(`   ${JSON.stringify(u.a)} <-> ${JSON.stringify(u.b)} [${u.decision}] -> ${reason}`);
     }
   }
 
