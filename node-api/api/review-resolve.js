@@ -68,12 +68,16 @@ module.exports = async (req, res) => {
 
       // Kalau pasangan ini kebetulan lagi nangkring di review_queue (status pending),
       // tandai selesai -- biar gak nongol lagi di UI review.
+      // CATATAN: $3/$4 di-cast eksplisit ke ::bigint karena dipakai DI DALAM
+      // LEAST()/GREATEST() (bukan dibandingin langsung ke kolom) -- Postgres
+      // gak bisa nebak tipe parameter dari konteks itu, defaultnya "text",
+      // bentrok sama kolom bigint ("operator does not exist: bigint = text").
       const reviewStatus = decision === "force_merge" ? "approved" : "rejected";
       await client.query(
         `UPDATE review_queue
          SET status = $1, resolved_by = $2, resolved_at = now()
-         WHERE LEAST(koridor_halte_a_id, koridor_halte_b_id) = LEAST($3, $4)
-           AND GREATEST(koridor_halte_a_id, koridor_halte_b_id) = GREATEST($3, $4)
+         WHERE LEAST(koridor_halte_a_id, koridor_halte_b_id) = LEAST($3::bigint, $4::bigint)
+           AND GREATEST(koridor_halte_a_id, koridor_halte_b_id) = GREATEST($3::bigint, $4::bigint)
            AND status = 'pending'`,
         [reviewStatus, resolvedBy || null, koridorHalteAId, koridorHalteBId]
       );
