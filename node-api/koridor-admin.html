@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kelola Koridor — Semarang BRT</title>
+<style>
+  :root {
+    --bg: #0F1B1E;
+    --surface: #16262A;
+    --surface-2: #1C3238;
+    --border: #274046;
+    --text: #E7EEEE;
+    --text-dim: #8CA3A8;
+    --amber: #F2A93B;
+    --merge: #4FAE7C;
+    --merge-dim: #2E5C46;
+    --split: #E2664F;
+    --split-dim: #5C332C;
+    --mono: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+  header { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; }
+  header h1 { font-size: 19px; font-weight: 600; margin: 0; }
+  header h1 .eyebrow { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber); margin-bottom: 4px; }
+  .hint { font-size: 12px; color: var(--text-dim); max-width: 420px; text-align: right; line-height: 1.5; }
+  .hint a { color: var(--amber); }
+
+  main { max-width: 900px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+  .card.inactive { opacity: 0.55; }
+
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .kode-badge { font-family: var(--mono); font-size: 12px; font-weight: 700; background: var(--surface-2); border-radius: 6px; padding: 4px 9px; color: var(--amber); }
+  .nama-label { font-size: 13px; color: var(--text-dim); }
+  .color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border); margin-left: auto; }
+
+  .field-grid { display: grid; grid-template-columns: 1.4fr 0.6fr 1fr 1fr 0.6fr; gap: 10px; align-items: end; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); }
+  input[type=text], input[type=number], select {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); font-family: var(--sans); font-size: 13px; padding: 7px 9px;
+    width: 100%;
+  }
+  input[type=color] { width: 40px; height: 32px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-2); padding: 2px; cursor: pointer; }
+  .color-field { display: flex; gap: 6px; align-items: center; }
+
+  .toggle-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); margin-top: 10px; }
+  .toggle-row input { cursor: pointer; }
+
+  .card-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+  button { font-family: var(--sans); font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; }
+  button:hover { filter: brightness(1.12); }
+  .btn-save { background: var(--merge-dim); color: #C8F0DA; border-color: var(--merge); }
+  .save-status { font-size: 11px; color: var(--text-dim); align-self: center; }
+  .save-status.ok { color: var(--merge); }
+  .save-status.err { color: var(--split); }
+
+  .add-card { border-style: dashed; }
+  .add-card h2 { font-size: 13px; margin: 0 0 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+  .add-grid { display: grid; grid-template-columns: 0.8fr 1.6fr 0.5fr 0.6fr; gap: 10px; align-items: end; }
+  .btn-add { background: var(--split-dim); color: #FBDAD2; border-color: var(--split); grid-column: 1 / -1; }
+
+  .state-msg { text-align: center; color: var(--text-dim); padding: 40px 20px; font-size: 14px; }
+
+  @media (max-width: 720px) {
+    .field-grid, .add-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="eyebrow">Semarang BRT · Data Ops</span>Kelola Koridor</h1>
+  <div class="hint">
+    Cuma metadata (judul, warna, jam operasional). Garis rute (GeoJSON) & shape leg
+    tetep diedit lewat file + <code>shapes/build-all-shapes.js</code> --
+    lihat <code>shapes/README.md</code> di repo.
+  </div>
+</header>
+
+<main id="list">
+  <div class="state-msg">memuat koridor…</div>
+</main>
+
+<script>
+const API = "/api/koridor";
+let koridorData = [];
+
+async function loadList() {
+  const list = document.getElementById("list");
+  try {
+    const res = await fetch(API);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    koridorData = await res.json();
+    render();
+  } catch (err) {
+    list.innerHTML = `<div class="state-msg">Gagal memuat: ${err.message}</div>`;
+  }
+}
+
+function render() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  for (const k of koridorData) {
+    list.appendChild(renderCard(k));
+  }
+  list.appendChild(renderAddCard());
+}
+
+function renderCard(k) {
+  const card = document.createElement("div");
+  card.className = "card" + (k.is_active ? "" : " inactive");
+
+  const schedule = k.schedule || { type: "daily", hours: [] };
+  const hoursStr = (schedule.hours || []).join(", ");
+
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="kode-badge">${escapeHtml(k.kode)}</span>
+      <span class="nama-label">${escapeHtml(k.nama)}</span>
+      <span class="color-dot" style="background:${escapeHtml(k.color || '#888')}"></span>
+    </div>
+    <div class="field-grid">
+      <div class="field"><label>Judul (title)</label><input type="text" data-field="title" value="${escapeAttr(k.title || '')}" /></div>
+      <div class="field"><label>Warna</label>
+        <div class="color-field">
+          <input type="color" data-field="color" value="${escapeAttr(normalizeHex(k.color))}" />
+          <input type="text" data-field="colorHex" value="${escapeAttr(k.color || '')}" style="flex:1" />
+        </div>
+      </div>
+      <div class="field"><label>Agency</label><input type="text" data-field="agency" value="${escapeAttr(k.agency || '')}" /></div>
+      <div class="field"><label>Jam operasional (pisah koma)</label><input type="text" data-field="hours" value="${escapeAttr(hoursStr)}" placeholder="05:00-21:00" /></div>
+      <div class="field"><label>Urutan</label><input type="number" data-field="displayOrder" value="${k.display_order}" /></div>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" data-field="isActive" ${k.is_active ? "checked" : ""} id="active-${k.id}" />
+      <label for="active-${k.id}">Aktif (tampil di peta)</label>
+    </div>
+    <div class="card-actions">
+      <span class="save-status"></span>
+      <button class="btn-save">Simpan</button>
+    </div>
+  `;
+
+  const colorInput = card.querySelector('[data-field="color"]');
+  const colorHexInput = card.querySelector('[data-field="colorHex"]');
+  colorInput.addEventListener("input", () => { colorHexInput.value = colorInput.value; });
+  colorHexInput.addEventListener("input", () => {
+    if (/^#[0-9a-fA-F]{6}$/.test(colorHexInput.value)) colorInput.value = colorHexInput.value;
+  });
+
+  card.querySelector(".btn-save").addEventListener("click", () => saveCard(k.id, card));
+
+  return card;
+}
+
+function renderAddCard() {
+  const card = document.createElement("div");
+  card.className = "card add-card";
+  card.innerHTML = `
+    <h2>+ Tambah koridor baru</h2>
+    <div class="add-grid">
+      <div class="field"><label>Kode</label><input type="text" data-field="kode" placeholder="9" /></div>
+      <div class="field"><label>Nama / Judul</label><input type="text" data-field="nama" placeholder="Terminal X - Terminal Y" /></div>
+      <div class="field"><label>Warna</label><input type="color" data-field="color" value="#4FAE7C" /></div>
+      <button class="btn-add">Tambah</button>
+    </div>
+    <div class="save-status" style="margin-top:8px;"></div>
+  `;
+  card.querySelector(".btn-add").addEventListener("click", () => addKoridor(card));
+  return card;
+}
+
+async function saveCard(id, card) {
+  const statusEl = card.querySelector(".save-status");
+  const get = (f) => card.querySelector(`[data-field="${f}"]`).value;
+  const isActive = card.querySelector('[data-field="isActive"]').checked;
+
+  const body = {
+    id,
+    title: get("title"),
+    color: get("colorHex"),
+    agency: get("agency"),
+    schedule: { type: "daily", hours: get("hours").split(",").map((s) => s.trim()).filter(Boolean) },
+    displayOrder: Number(get("displayOrder")),
+    isActive,
+  };
+
+  statusEl.textContent = "menyimpan…";
+  statusEl.className = "save-status";
+  try {
+    const res = await fetch(API, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    statusEl.textContent = "✓ tersimpan";
+    statusEl.className = "save-status ok";
+    setTimeout(() => { statusEl.textContent = ""; }, 2000);
+  } catch (err) {
+    statusEl.textContent = "✗ " + err.message;
+    statusEl.className = "save-status err";
+  }
+}
+
+async function addKoridor(card) {
+  const statusEl = card.querySelector(".save-status");
+  const get = (f) => card.querySelector(`[data-field="${f}"]`).value;
+  const kode = get("kode").trim();
+  const nama = get("nama").trim();
+
+  if (!kode || !nama) {
+    statusEl.textContent = "✗ Kode dan nama wajib diisi";
+    statusEl.className = "save-status err";
+    return;
+  }
+
+  statusEl.textContent = "menyimpan…";
+  statusEl.className = "save-status";
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kode, nama, title: nama, color: get("color") }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    await loadList(); // refresh biar koridor baru langsung keliatan sebagai card biasa
+  } catch (err) {
+    statusEl.textContent = "✗ " + err.message;
+    statusEl.className = "save-status err";
+  }
+}
+
+function normalizeHex(c) {
+  return /^#[0-9a-fA-F]{6}$/.test(c) ? c : "#888888";
+}
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+loadList();
+</script>
+</body>
+</html>
