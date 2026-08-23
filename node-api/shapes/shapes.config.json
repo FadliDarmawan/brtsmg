@@ -1,0 +1,28 @@
+{
+  "_readme": "Satu entry per koridor yang punya file di /routes. Isi ini SEKALI per koridor pas pertama kali nyiapin geometrinya (sama kayak dulu ngetik --start manual di Jogja) -- bukan sesuatu yang berubah tiap ada edit halte. Field yang gak dipake boleh diilangin/null. 'order' & 'patch' nunjuk ke file teks relatif dari folder ini (lihat contoh di shapes/order/ dan shapes/patch/).",
+
+  "1": {
+    "start": null,
+    "order": null,
+    "patch": null,
+    "reverse": false,
+    "_note": "TODO: isi nama halte awal (start) yang dipake sebagai vertex 0, sama seperti dulu di index.html ROUTE_DIRECTIONS Jogja."
+  },
+  "2": { "start": null, "order": null, "patch": null, "reverse": false },
+  "3A": { "start": null, "order": null, "patch": null, "reverse": false },
+  "3B": { "start": null, "order": null, "patch": null, "reverse": false },
+  "4": { "start": null, "order": null, "patch": null, "reverse": false },
+  "5": { "start": null, "order": null, "patch": null, "reverse": false },
+  "6": { "start": null, "order": null, "patch": null, "reverse": false },
+  "7": { "start": null, "order": null, "patch": null, "reverse": false },
+  "8": { "start": null, "order": null, "patch": null, "reverse": false },
+  "PC": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F1A": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F1B": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F2A": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F2B": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F2C": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F3": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F4A": { "start": null, "order": null, "patch": null, "reverse": false },
+  "F4B": { "start": null, "order": null, "patch": null, "reverse": false }
+}

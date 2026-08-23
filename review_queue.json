@@ -1,0 +1,359 @@
+[
+  {
+    "record_a": {
+      "koridor": "1 Mangkang-Penggaron (H) ",
+      "nama": "Gramedia Pandanaran [Utara]",
+      "lat": -6.988954,
+      "lng": 110.420646
+    },
+    "record_b": {
+      "koridor": "M Mangkang - Simpang 5 (H)",
+      "nama": "Gramedia Pandanaran",
+      "lat": -6.989177,
+      "lng": 110.420674
+    },
+    "distance_m": 25.0,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "3B Pelabuhan-Elisabeth (H)",
+      "nama": "Gramedia Pandanaran [Utara]",
+      "lat": -6.988954,
+      "lng": 110.420646
+    },
+    "record_b": {
+      "koridor": "M Mangkang - Simpang 5 (H)",
+      "nama": "Gramedia Pandanaran",
+      "lat": -6.989177,
+      "lng": 110.420674
+    },
+    "distance_m": 25.0,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "4 Cangkiran-Tantular (H)",
+      "nama": "Gramedia Pandanaran [Utara]",
+      "lat": -6.988954,
+      "lng": 110.420646
+    },
+    "record_b": {
+      "koridor": "M Mangkang - Simpang 5 (H)",
+      "nama": "Gramedia Pandanaran",
+      "lat": -6.989177,
+      "lng": 110.420674
+    },
+    "distance_m": 25.0,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "5 PRPP-Meteseh (H)",
+      "nama": "Gramedia Pandanaran [Utara]",
+      "lat": -6.988954,
+      "lng": 110.420646
+    },
+    "record_b": {
+      "koridor": "M Mangkang - Simpang 5 (H)",
+      "nama": "Gramedia Pandanaran",
+      "lat": -6.989177,
+      "lng": 110.420674
+    },
+    "distance_m": 25.0,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "8 Cangkiran-Simpang Lima (H)",
+      "nama": "Gramedia Pandanaran [Utara]",
+      "lat": -6.988954,
+      "lng": 110.420646
+    },
+    "record_b": {
+      "koridor": "M Mangkang - Simpang 5 (H)",
+      "nama": "Gramedia Pandanaran",
+      "lat": -6.989177,
+      "lng": 110.420674
+    },
+    "distance_m": 25.0,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "RSI Sultan Agung [Utara]",
+      "lat": -6.956237,
+      "lng": 110.460062
+    },
+    "record_b": {
+      "koridor": "F2A Terboyo-Tlogosari (H)",
+      "nama": "RSI Sultan Agung [Utara]",
+      "lat": -6.956476,
+      "lng": 110.460443
+    },
+    "distance_m": 49.7,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Kampung Tenggang [Utara]",
+      "lat": -6.957296,
+      "lng": 110.449482
+    },
+    "record_b": {
+      "koridor": "F2A Terboyo-Tlogosari (H)",
+      "nama": "Kampung Tenggang [Utara]",
+      "lat": -6.9575,
+      "lng": 110.4494
+    },
+    "distance_m": 24.4,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Kaligawe [Selatan]",
+      "lat": -6.959783,
+      "lng": 110.443183
+    },
+    "record_b": {
+      "koridor": "F2A Terboyo-Tlogosari (H)",
+      "nama": "Pojok Kaligawe",
+      "lat": -6.960238,
+      "lng": 110.442938
+    },
+    "distance_m": 57.4,
+    "name_similarity": 0.73,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Mandiri Pemuda",
+      "lat": -6.97548,
+      "lng": 110.418267
+    },
+    "record_b": {
+      "koridor": "5 PRPP-Meteseh (H)",
+      "nama": "BCA Pemuda",
+      "lat": -6.975762,
+      "lng": 110.418219
+    },
+    "distance_m": 31.8,
+    "name_similarity": 0.67,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Mandiri Pemuda",
+      "lat": -6.97548,
+      "lng": 110.418267
+    },
+    "record_b": {
+      "koridor": "3A Pelabuhan-Kagok (H)",
+      "nama": "BCA Pemuda",
+      "lat": -6.975762,
+      "lng": 110.418219
+    },
+    "distance_m": 31.8,
+    "name_similarity": 0.67,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Mandiri Pemuda",
+      "lat": -6.97548,
+      "lng": 110.418267
+    },
+    "record_b": {
+      "koridor": "3B Pelabuhan-Elisabeth (H)",
+      "nama": "BCA Pemuda",
+      "lat": -6.975762,
+      "lng": 110.418219
+    },
+    "distance_m": 31.8,
+    "name_similarity": 0.67,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Pasar Jatingaleh",
+      "lat": -7.032072,
+      "lng": 110.417876
+    },
+    "record_b": {
+      "koridor": "3B Pelabuhan-Elisabeth (H)",
+      "nama": "PDAM Jatingaleh [Barat]",
+      "lat": -7.032272,
+      "lng": 110.418124
+    },
+    "distance_m": 35.3,
+    "name_similarity": 0.84,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Pasar Jatingaleh",
+      "lat": -7.032072,
+      "lng": 110.417876
+    },
+    "record_b": {
+      "koridor": "6 UNDIP-UNNES (H)",
+      "nama": "PDAM Jatingaleh [Timur]",
+      "lat": -7.032272,
+      "lng": 110.418124
+    },
+    "distance_m": 35.3,
+    "name_similarity": 0.84,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Pasar Jatingaleh",
+      "lat": -7.032072,
+      "lng": 110.417876
+    },
+    "record_b": {
+      "koridor": "3A Pelabuhan-Kagok (H)",
+      "nama": "PDAM Jatingaleh [Timur]",
+      "lat": -7.032272,
+      "lng": 110.418124
+    },
+    "distance_m": 35.3,
+    "name_similarity": 0.84,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Pasar Jatingaleh",
+      "lat": -7.032072,
+      "lng": 110.417876
+    },
+    "record_b": {
+      "koridor": "6 UNDIP-UNNES (H)",
+      "nama": "PDAM Jatingaleh [Timur]",
+      "lat": -7.032272,
+      "lng": 110.418124
+    },
+    "distance_m": 35.3,
+    "name_similarity": 0.84,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "3A Pelabuhan-Kagok (H)",
+      "nama": "Pasar Jatingaleh [Barat]",
+      "lat": -7.032072,
+      "lng": 110.417876
+    },
+    "record_b": {
+      "koridor": "3B Pelabuhan-Elisabeth (H)",
+      "nama": "PDAM Jatingaleh [Barat]",
+      "lat": -7.032272,
+      "lng": 110.418124
+    },
+    "distance_m": 35.3,
+    "name_similarity": 0.84,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "3B Pelabuhan-Elisabeth (H)",
+      "nama": "PDAM Jatingaleh [Barat]",
+      "lat": -7.032272,
+      "lng": 110.418124
+    },
+    "record_b": {
+      "koridor": "6 UNDIP-UNNES (H)",
+      "nama": "Pasar Jatingaleh [Barat]",
+      "lat": -7.032072,
+      "lng": 110.417876
+    },
+    "distance_m": 35.3,
+    "name_similarity": 0.84,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "Bukit Sari [Barat]",
+      "lat": -7.043848,
+      "lng": 110.421431
+    },
+    "record_b": {
+      "koridor": "6 UNDIP-UNNES (H)",
+      "nama": "Bukit Sari",
+      "lat": -7.04424,
+      "lng": 110.421555
+    },
+    "distance_m": 45.7,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "2 Terboyo-Ungaran (H)",
+      "nama": "LIK [Utara]",
+      "lat": -6.956637,
+      "lng": 110.455471
+    },
+    "record_b": {
+      "koridor": "F2A Terboyo-Tlogosari (H)",
+      "nama": "LIK [Utara]",
+      "lat": -6.956888,
+      "lng": 110.455598
+    },
+    "distance_m": 31.2,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "4 Cangkiran-Tantular (H)",
+      "nama": "Pertigaan Cangkiran [Timur]",
+      "lat": -7.08619,
+      "lng": 110.30975
+    },
+    "record_b": {
+      "koridor": "8 Cangkiran-Simpang Lima (H)",
+      "nama": "Pertigaan Cangkiran",
+      "lat": -7.0858,
+      "lng": 110.30973
+    },
+    "distance_m": 43.4,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  },
+  {
+    "record_a": {
+      "koridor": "4 Cangkiran-Tantular (H)",
+      "nama": "Pertigaan Cangkiran [Timur]",
+      "lat": -7.08619,
+      "lng": 110.30975
+    },
+    "record_b": {
+      "koridor": "8 Cangkiran-Simpang Lima (H)",
+      "nama": "Pertigaan Cangkiran",
+      "lat": -7.0858,
+      "lng": 110.30973
+    },
+    "distance_m": 43.4,
+    "name_similarity": 1.0,
+    "reason": "jarak dekat & nama mirip, tapi di atas ambang auto-merge"
+  }
+]

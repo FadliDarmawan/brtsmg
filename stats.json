@@ -1,0 +1,12 @@
+{
+  "total_sheets_parsed": 19,
+  "total_koridor_halte_rows": 1512,
+  "total_halte_master_after_merge": 1105,
+  "reduction": 407,
+  "auto_merged_multi_koridor": 215,
+  "review_queue_size": 21,
+  "rows_with_invalid_or_missing_coord": 0,
+  "rows_using_low_confidence_coord_aplikasi": 1,
+  "rows_with_any_issue": 0,
+  "parse_warnings": []
+}

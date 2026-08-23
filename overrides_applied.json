@@ -1,0 +1,302 @@
+[
+  {
+    "a": [
+      "M Mangkang - Simpang 5 (H)",
+      32
+    ],
+    "b": [
+      "1 Mangkang-Penggaron (H) ",
+      32
+    ],
+    "decision": "force_merge",
+    "note": "Gramedia Pandanaran (M, tanpa tag) confirmed = sisi Utara"
+  },
+  {
+    "a": [
+      "M Mangkang - Simpang 5 (H)",
+      32
+    ],
+    "b": [
+      "3B Pelabuhan-Elisabeth (H)",
+      23
+    ],
+    "decision": "force_merge",
+    "note": "Gramedia Pandanaran (M, tanpa tag) confirmed = sisi Utara"
+  },
+  {
+    "a": [
+      "M Mangkang - Simpang 5 (H)",
+      32
+    ],
+    "b": [
+      "4 Cangkiran-Tantular (H)",
+      46
+    ],
+    "decision": "force_merge",
+    "note": "Gramedia Pandanaran (M, tanpa tag) confirmed = sisi Utara"
+  },
+  {
+    "a": [
+      "M Mangkang - Simpang 5 (H)",
+      32
+    ],
+    "b": [
+      "5 PRPP-Meteseh (H)",
+      25
+    ],
+    "decision": "force_merge",
+    "note": "Gramedia Pandanaran (M, tanpa tag) confirmed = sisi Utara"
+  },
+  {
+    "a": [
+      "M Mangkang - Simpang 5 (H)",
+      32
+    ],
+    "b": [
+      "8 Cangkiran-Simpang Lima (H)",
+      58
+    ],
+    "decision": "force_merge",
+    "note": "Gramedia Pandanaran (M, tanpa tag) confirmed = sisi Utara"
+  },
+  {
+    "a": [
+      "M Mangkang - Simpang 5 (H)",
+      32
+    ],
+    "b": [
+      "1 Mangkang-Penggaron (H) ",
+      67
+    ],
+    "decision": "force_split",
+    "note": "koordinat M-polos kebetulan sama persis dgn [Selatan], tapi ini sebenarnya sisi Utara"
+  },
+  {
+    "a": [
+      "M Mangkang - Simpang 5 (H)",
+      32
+    ],
+    "b": [
+      "8 Cangkiran-Simpang Lima (H)",
+      61
+    ],
+    "decision": "force_split",
+    "note": "koordinat M-polos kebetulan sama persis dgn [Selatan], tapi ini sebenarnya sisi Utara"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      88
+    ],
+    "b": [
+      "F2A Terboyo-Tlogosari (H)",
+      90
+    ],
+    "decision": "force_merge",
+    "note": "RSI Sultan Agung [Utara] confirmed sama titik"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      86
+    ],
+    "b": [
+      "F2A Terboyo-Tlogosari (H)",
+      88
+    ],
+    "decision": "force_merge",
+    "note": "Kampung Tenggang [Utara] confirmed sama titik"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      6
+    ],
+    "b": [
+      "F2A Terboyo-Tlogosari (H)",
+      84
+    ],
+    "decision": "force_split",
+    "note": "confirmed 2 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      75
+    ],
+    "b": [
+      "5 PRPP-Meteseh (H)",
+      76
+    ],
+    "decision": "force_split",
+    "note": "confirmed 2 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      75
+    ],
+    "b": [
+      "3A Pelabuhan-Kagok (H)",
+      44
+    ],
+    "decision": "force_split",
+    "note": "confirmed 2 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      75
+    ],
+    "b": [
+      "3B Pelabuhan-Elisabeth (H)",
+      15
+    ],
+    "decision": "force_split",
+    "note": "confirmed 2 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      61
+    ],
+    "b": [
+      "3B Pelabuhan-Elisabeth (H)",
+      32
+    ],
+    "decision": "force_split",
+    "note": "confirmed 3 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      61
+    ],
+    "b": [
+      "6 UNDIP-UNNES (H)",
+      30
+    ],
+    "decision": "force_split",
+    "note": "confirmed 3 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      61
+    ],
+    "b": [
+      "6 UNDIP-UNNES (H)",
+      98
+    ],
+    "decision": "force_split",
+    "note": "confirmed 3 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      61
+    ],
+    "b": [
+      "3A Pelabuhan-Kagok (H)",
+      23
+    ],
+    "decision": "force_split",
+    "note": "confirmed 3 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "3A Pelabuhan-Kagok (H)",
+      24
+    ],
+    "b": [
+      "3B Pelabuhan-Elisabeth (H)",
+      32
+    ],
+    "decision": "force_split",
+    "note": "confirmed 3 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "3B Pelabuhan-Elisabeth (H)",
+      32
+    ],
+    "b": [
+      "6 UNDIP-UNNES (H)",
+      10
+    ],
+    "decision": "force_split",
+    "note": "confirmed 3 titik fisik berbeda"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      60
+    ],
+    "b": [
+      "6 UNDIP-UNNES (H)",
+      99
+    ],
+    "decision": "force_split",
+    "note": "confirmed beda; Bukit Sari(k6) sudah otomatis benar ke [Timur]"
+  },
+  {
+    "a": [
+      "2 Terboyo-Ungaran (H)",
+      87
+    ],
+    "b": [
+      "F2A Terboyo-Tlogosari (H)",
+      89
+    ],
+    "decision": "force_merge",
+    "note": "LIK [Utara] confirmed sama titik"
+  },
+  {
+    "a": [
+      "8 Cangkiran-Simpang Lima (H)",
+      2
+    ],
+    "b": [
+      "4 Cangkiran-Tantular (H)",
+      2
+    ],
+    "decision": "force_merge",
+    "note": "arah Sp.Lima = sisi Barat (koordinat sudah cocok)"
+  },
+  {
+    "a": [
+      "8 Cangkiran-Simpang Lima (H)",
+      112
+    ],
+    "b": [
+      "4 Cangkiran-Tantular (H)",
+      2
+    ],
+    "decision": "force_split",
+    "note": "arah Cangkiran BUKAN sisi Barat, walau koordinat kebetulan sama (bug data)"
+  },
+  {
+    "a": [
+      "8 Cangkiran-Simpang Lima (H)",
+      112
+    ],
+    "b": [
+      "4 Cangkiran-Tantular (H)",
+      114
+    ],
+    "decision": "force_merge",
+    "note": "arah Cangkiran = sisi Timur (override manual, koordinat mentahnya salah)"
+  },
+  {
+    "a": [
+      "8 Cangkiran-Simpang Lima (H)",
+      2
+    ],
+    "b": [
+      "4 Cangkiran-Tantular (H)",
+      114
+    ],
+    "decision": "force_split",
+    "note": "arah Sp.Lima sudah dipastikan sisi Barat, bukan Timur"
+  }
+]

@@ -1,0 +1,55 @@
+name: Rebuild route shapes
+
+# SENGAJA workflow_dispatch (manual) + jadwal, BUKAN trigger otomatis tiap
+# ada perubahan halte. Alasannya: build-route-shapes.js fail-loud pas ada
+# geometri yang butuh judgment manusia (loop gak nutup, arah kebalik, stop
+# meleset jauh) -- itu justru fitur, bukan bug, jadi hasilnya perlu direview
+# lewat PR, gak di-auto-commit ke main.
+on:
+  workflow_dispatch:
+    inputs:
+      api_base:
+        description: "Base URL deployment (buat ambil /api/stops)"
+        required: true
+        default: "https://semarang-brt.vercel.app"
+  schedule:
+    - cron: "0 2 * * 1" # tiap Senin jam 02:00 UTC -- sesuaikan/hapus kalau gak perlu jadwal rutin
+
+jobs:
+  rebuild-shapes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Rebuild semua shape rute
+        run: |
+          node shapes/build-all-shapes.js --api=${{ github.event.inputs.api_base || 'https://semarang-brt.vercel.app' }}
+
+      - name: Cek ada perubahan
+        id: diff
+        run: |
+          if git diff --quiet -- routes/; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Buka Pull Request kalau ada perubahan
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: rebuild route shapes dari data halte terkini"
+          title: "Rebuild route shapes"
+          body: |
+            Auto-generated oleh workflow `rebuild-shapes` -- data halte di
+            `/api/stops` udah beda dari terakhir kali shape di-generate.
+
+            **WAJIB direview manual sebelum merge**, terutama:
+            - koridor yang keluar warning di log run ini (cek tab Actions)
+            - koridor yang jumlah vertex-nya berubah signifikan
+          branch: auto/rebuild-route-shapes
+          delete-branch: true
