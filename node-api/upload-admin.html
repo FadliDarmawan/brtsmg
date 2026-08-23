@@ -1,169 +1,272 @@
-// api/upload.js
-//
-// POST multipart/form-data, field "file" = .xlsx
-//
-// Alur (semua dalam SATU transaction, biar gak ada state setengah-jadi kalau
-// gagal di tengah jalan):
-//   1. Parse workbook -> per koridor: daftar halte
-//   2. Upsert koridor (by kode); replace TOTAL koridor_halte utk koridor itu
-//   3. Catat upload_batch (audit trail)
-//   4. Commit, baru jalanin mergeHalte() (full re-merge lintas koridor)
-//   5. Bump publish_version -> /api/stops tau harus invalidate cache
-//
-// NOTE: Vercel default gak parse multipart body -- pake formidable di sini.
-// Kalau nanti pindah ke Next.js App Router, ganti ke request.formData() bawaan.
-
-const { formidable } = require("formidable");
-const fs = require("fs");
-const { withTransaction } = require("../lib/db");
-const { parseWorkbook } = require("../lib/parseWorkbook");
-const { mergeHalte } = require("../lib/mergeHalte");
-
-module.exports.config = { api: { bodyParser: false } };
-
-function parseMultipart(req) {
-  return new Promise((resolve, reject) => {
-    const form = formidable({ maxFileSize: 20 * 1024 * 1024 }); // 20MB cukup buat excel ini
-    form.parse(req, (err, fields, files) => {
-      if (err) return reject(err);
-      resolve({ fields, files });
-    });
-  });
-}
-
-module.exports = async (req, res) => {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Upload Data Halte — Semarang BRT</title>
+<style>
+  :root {
+    --bg: #0F1B1E;
+    --surface: #16262A;
+    --surface-2: #1C3238;
+    --border: #274046;
+    --text: #E7EEEE;
+    --text-dim: #8CA3A8;
+    --amber: #F2A93B;
+    --merge: #4FAE7C;
+    --merge-dim: #2E5C46;
+    --split: #E2664F;
+    --split-dim: #5C332C;
+    --mono: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+  header {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { font-size: 19px; font-weight: 600; margin: 0; }
+  header h1 .eyebrow {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    margin-bottom: 4px;
+  }
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
   }
 
-  let buffer;
-  let filename;
+  .dropzone {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--amber);
+    background: var(--surface-2);
+  }
+  .dropzone .icon { font-size: 32px; margin-bottom: 10px; }
+  .dropzone .main-text { font-size: 14px; font-weight: 600; }
+  .dropzone .sub-text { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  #file-input { display: none; }
+
+  #filename {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--amber);
+    text-align: center;
+    min-height: 16px;
+  }
+
+  button#submit-btn {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--merge);
+    background: var(--merge-dim);
+    color: #C8F0DA;
+    cursor: pointer;
+  }
+  button#submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  button#submit-btn:not(:disabled):hover { filter: brightness(1.12); }
+
+  .state-msg {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  .result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: none;
+  }
+  .result.show { display: block; }
+  .result.error { border-color: var(--split); }
+  .result h2 {
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .metric-box {
+    background: var(--surface-2);
+    border-radius: 7px;
+    padding: 10px 12px;
+  }
+  .metric-box .label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .metric-box .value {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--amber);
+    margin-top: 2px;
+  }
+  .result pre {
+    background: var(--surface-2);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .review-cta {
+    margin-top: 14px;
+    font-size: 13px;
+  }
+  .review-cta a { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="eyebrow">Semarang BRT · Data Ops</span>Upload Data Halte</h1>
+</header>
+
+<main>
+  <div class="dropzone" id="dropzone">
+    <div class="icon">📄</div>
+    <div class="main-text">Klik atau drag file .xlsx ke sini</div>
+    <div class="sub-text">Format: 1 sheet per koridor, sama seperti Rekap_Halte_BRT_Ori.xlsx</div>
+  </div>
+  <input type="file" id="file-input" accept=".xlsx" />
+  <div id="filename"></div>
+
+  <button id="submit-btn" disabled>Upload &amp; Proses</button>
+  <div class="state-msg" id="state-msg"></div>
+
+  <div class="result" id="result"></div>
+</main>
+
+<script>
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("file-input");
+const filenameEl = document.getElementById("filename");
+const submitBtn = document.getElementById("submit-btn");
+const stateMsg = document.getElementById("state-msg");
+const resultEl = document.getElementById("result");
+
+let selectedFile = null;
+
+dropzone.addEventListener("click", () => fileInput.click());
+dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("dragover"); });
+dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+dropzone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropzone.classList.remove("dragover");
+  if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length) setFile(fileInput.files[0]);
+});
+
+function setFile(file) {
+  if (!file.name.toLowerCase().endsWith(".xlsx")) {
+    stateMsg.textContent = "File harus .xlsx";
+    return;
+  }
+  selectedFile = file;
+  filenameEl.textContent = file.name;
+  submitBtn.disabled = false;
+  stateMsg.textContent = "";
+}
+
+submitBtn.addEventListener("click", async () => {
+  if (!selectedFile) return;
+  submitBtn.disabled = true;
+  stateMsg.textContent = "Mengupload & memproses (parsing + merge)... bisa beberapa detik untuk ~1500 baris.";
+  resultEl.classList.remove("show", "error");
+
+  const formData = new FormData();
+  formData.append("file", selectedFile);
+
   try {
-    const { files } = await parseMultipart(req);
-    const file = Array.isArray(files.file) ? files.file[0] : files.file;
-    if (!file) {
-      res.status(400).json({ error: "Field 'file' (xlsx) wajib diisi" });
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError(data.error || `HTTP ${res.status}`);
       return;
     }
-    filename = file.originalFilename || "upload.xlsx";
-    buffer = fs.readFileSync(file.filepath);
+
+    showResult(data);
+    stateMsg.textContent = "";
   } catch (err) {
-    res.status(400).json({ error: `Gagal baca file upload: ${err.message}` });
-    return;
+    showError(err.message);
+  } finally {
+    submitBtn.disabled = false;
   }
+});
 
-  let parsed;
-  try {
-    parsed = parseWorkbook(buffer);
-  } catch (err) {
-    res.status(400).json({ error: `Gagal parse workbook: ${err.message}` });
-    return;
-  }
-
-  const { koridorList, halteByKoridorKode, warnings } = parsed;
-  if (!koridorList.length) {
-    res.status(400).json({ error: "Tidak ada sheet koridor valid ditemukan di file ini", warnings });
-    return;
-  }
-
-  try {
-    const batchResult = await withTransaction(async (client) => {
-      let nextDisplayOrder = await getNextDisplayOrder(client);
-      const koridorKodesTerdampak = [];
-      let totalRowsInserted = 0;
-
-      for (const { kode, nama, sheetName } of koridorList) {
-        const records = halteByKoridorKode[kode] || [];
-        koridorKodesTerdampak.push(kode);
-
-        // Upsert koridor. title/color/agency/schedule sengaja TIDAK ditimpa
-        // kalau koridornya udah ada -- upload excel cuma buat data halte,
-        // metadata tampilan diedit lewat endpoint /api/koridor terpisah.
-        const { rows: koridorRows } = await client.query(
-          `INSERT INTO koridor (kode, nama, sheet_name_asal, title, display_order)
-           VALUES ($1, $2, $3, $2, $4)
-           ON CONFLICT (kode) DO UPDATE
-             SET nama = EXCLUDED.nama, sheet_name_asal = EXCLUDED.sheet_name_asal
-           RETURNING id`,
-          [kode, nama, sheetName, nextDisplayOrder++]
-        );
-        const koridorId = koridorRows[0].id;
-
-        // Replace total: hapus semua halte lama koridor ini, insert ulang dari file
-        await client.query(`DELETE FROM koridor_halte WHERE koridor_id = $1`, [koridorId]);
-
-        for (const r of records) {
-          await client.query(
-            `INSERT INTO koridor_halte (
-               koridor_id, no_urut, nama_halte, arah, fungsi_jalan,
-               trotoar, rambu_halte, transit, direction_tag,
-               lat_aplikasi, lng_aplikasi, lat_aktual, lng_aktual, lat_korlain, lng_korlain,
-               lat, lng, coord_source, coord_confidence
-             ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
-            [
-              koridorId, r.no_urut, r.nama_halte, r.arah, r.fungsi_jalan,
-              r.trotoar, r.rambu_halte, r.transit, r.direction_tag,
-              r.lat_aplikasi, r.lng_aplikasi, r.lat_aktual, r.lng_aktual, r.lat_korlain, r.lng_korlain,
-              r.lat, r.lng, r.coord_source, r.coord_confidence,
-            ]
-          );
-          totalRowsInserted++;
-        }
-      }
-
-      const issueRows = Object.values(halteByKoridorKode).flat().filter((r) => r.issues.length);
-
-      const { rows: batchRows } = await client.query(
-        `INSERT INTO upload_batch (filename, status, koridor_kodes_terdampak, summary)
-         VALUES ($1, 'completed', $2, $3) RETURNING id`,
-        [
-          filename,
-          koridorKodesTerdampak,
-          JSON.stringify({
-            total_koridor: koridorList.length,
-            total_rows_inserted: totalRowsInserted,
-            rows_with_issues: issueRows.length,
-            parse_warnings: warnings,
-          }),
-        ]
-      );
-
-      return { batchId: batchRows[0].id, koridorKodesTerdampak, totalRowsInserted, issueRows };
-    });
-
-    // Merge dijalanin di transaction TERPISAH setelah replace commit --
-    // sengaja dipisah biar kalau merge gagal, data halte yang barusan
-    // di-upload tetep tersimpan (gak ke-rollback gara-gara error di merge).
-    const mergeResult = await withTransaction(async (client) => {
-      const result = await mergeHalte(client);
-      await client.query(
-        `INSERT INTO publish_version (version, triggered_by_batch_id)
-         VALUES (
-           COALESCE((SELECT MAX(version) FROM publish_version), 0) + 1,
-           $1
-         )`,
-        [batchResult.batchId]
-      );
-      return result;
-    });
-
-    res.status(200).json({
-      ok: true,
-      upload_batch_id: batchResult.batchId,
-      koridor_terdampak: batchResult.koridorKodesTerdampak,
-      total_halte_diupload: batchResult.totalRowsInserted,
-      rows_dengan_issue: batchResult.issueRows.length,
-      issues_sample: batchResult.issueRows.slice(0, 20),
-      merge: mergeResult,
-      warnings,
-    });
-  } catch (err) {
-    res.status(500).json({ error: `Gagal proses upload: ${err.message}` });
-  }
-};
-
-async function getNextDisplayOrder(client) {
-  const { rows } = await client.query(`SELECT COALESCE(MAX(display_order), 0) AS max FROM koridor`);
-  return Number(rows[0].max) + 1;
+function showResult(data) {
+  resultEl.classList.add("show");
+  const reviewCount = data.merge?.reviewQueueInserted ?? 0;
+  resultEl.innerHTML = `
+    <h2>✓ Upload berhasil</h2>
+    <div class="result-grid">
+      <div class="metric-box"><div class="label">Koridor terdampak</div><div class="value">${data.koridor_terdampak?.length ?? 0}</div></div>
+      <div class="metric-box"><div class="label">Halte diupload</div><div class="value">${data.total_halte_diupload ?? 0}</div></div>
+      <div class="metric-box"><div class="label">Halte master (setelah merge)</div><div class="value">${data.merge?.halteMasterCount ?? "-"}</div></div>
+      <div class="metric-box"><div class="label">Kandidat review baru</div><div class="value">${reviewCount}</div></div>
+    </div>
+    ${data.rows_dengan_issue ? `<p style="color:var(--split);font-size:13px;">⚠ ${data.rows_dengan_issue} baris punya issue (lihat detail di bawah)</p>` : ""}
+    ${reviewCount > 0 ? `<div class="review-cta">Ada ${reviewCount} kandidat merge yang perlu direview manual → <a href="/review-admin.html">buka halaman review</a></div>` : ""}
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-size:12px;color:var(--text-dim);">Lihat response lengkap</summary>
+      <pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+    </details>
+  `;
 }
+
+function showError(message) {
+  resultEl.classList.add("show", "error");
+  resultEl.innerHTML = `<h2 style="color:var(--split);">✗ Gagal</h2><pre>${escapeHtml(message)}</pre>`;
+  stateMsg.textContent = "";
+}
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+</script>
+</body>
+</html>
