@@ -13,7 +13,7 @@
 // NOTE: Vercel default gak parse multipart body -- pake formidable di sini.
 // Kalau nanti pindah ke Next.js App Router, ganti ke request.formData() bawaan.
 
-const formidable = require("formidable");
+const { formidable } = require("formidable");
 const fs = require("fs");
 const { withTransaction } = require("../lib/db");
 const { parseWorkbook } = require("../lib/parseWorkbook");
