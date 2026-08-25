@@ -39,6 +39,7 @@
   .color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border); margin-left: auto; }
 
   .field-grid { display: grid; grid-template-columns: 1.4fr 0.6fr 1fr 1fr 0.6fr; gap: 10px; align-items: end; }
+  .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; margin-top: 10px; }
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); }
   input[type=text], input[type=number], select {
@@ -138,6 +139,19 @@ function renderCard(k) {
       <div class="field"><label>Jam operasional (pisah koma)</label><input type="text" data-field="hours" value="${escapeAttr(hoursStr)}" placeholder="05:00-21:00" /></div>
       <div class="field"><label>Urutan</label><input type="number" data-field="displayOrder" value="${k.display_order}" /></div>
     </div>
+    <div class="field-grid-2">
+      <div class="field">
+        <label>Start / end terminus (buat tombol "Show final destination")</label>
+        <input type="text" data-field="startStopName" value="${escapeAttr(k.start_stop_name || '')}" placeholder="Terminal Mangkang" />
+      </div>
+      <div class="field">
+        <label>Wayback (titik balik)</label>
+        <input type="text" data-field="waybackStopName" value="${escapeAttr(k.wayback_stop_name || '')}" placeholder="Penggaron" />
+      </div>
+    </div>
+    <div class="toggle-row" style="margin-top:6px;">
+      <span style="font-size:11px;color:var(--text-dim);">⚠ Nama di atas harus PERSIS sama seperti stop_name di /api/stops (termasuk tag [Utara]/dst kalau ada) -- kalau meleset, tombol destinasi rute itu diam-diam berhenti kerja. Ini juga dipakai shapes/build-all-shapes.js sebagai fallback --start.</span>
+    </div>
     <div class="toggle-row">
       <input type="checkbox" data-field="isActive" ${k.is_active ? "checked" : ""} id="active-${k.id}" />
       <label for="active-${k.id}">Aktif (tampil di peta)</label>
@@ -190,6 +204,8 @@ async function saveCard(id, card) {
     schedule: { type: "daily", hours: get("hours").split(",").map((s) => s.trim()).filter(Boolean) },
     displayOrder: Number(get("displayOrder")),
     isActive,
+    startStopName: get("startStopName").trim() || null,
+    waybackStopName: get("waybackStopName").trim() || null,
   };
 
   statusEl.textContent = "menyimpan…";

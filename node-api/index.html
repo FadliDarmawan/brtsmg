@@ -1175,7 +1175,7 @@ function buildStopsGeoJSON() {
 // nganggep dua variabel ini udah terisi synchronous, gak perlu direfactor.
 const routeMetaRes = await fetch("/api/routes-meta");
 if (!routeMetaRes.ok) throw new Error(`Gagal load route metadata: HTTP ${routeMetaRes.status}`);
-const { routeMeta: ROUTE_META, routeIds: ROUTE_IDS } = await routeMetaRes.json();
+const { routeMeta: ROUTE_META, routeIds: ROUTE_IDS, routeDirections: ROUTE_DIRECTIONS_FROM_API } = await routeMetaRes.json();
 window.ROUTE_META = ROUTE_META;
 window.ROUTE_IDS = ROUTE_IDS;
 
@@ -1542,45 +1542,18 @@ applySheetState("peek", false);
 // AUDIT-YOGYAKARTA.md for what's needed before this can be filled in
 // safely, and DISPLAY_NAMES above for a couple of spellings already
 // confirmed against real route-shape data (1B's "Adisujtipto" typo).
-const ROUTE_DIRECTIONS = {
-  "1A": { start: "Terminal Prambanan", wayback: "Malioboro 3", end: "Terminal Prambanan" },
-  "1B": { start: "Bandara Adisutjipto", wayback: "Ngabean", end: "Bandara Adisutjipto" },
-  "2A": { start: "Terminal Condongcatur", wayback: "RS Hidayatullah", end: "Terminal Condongcatur" },
-  "2B": { start: "Terminal Condongcatur", wayback: "XT Square", end: "Terminal Condongcatur" },
-  "3A": { start: "Terminal Giwangan", wayback: "Terminal Condongcatur", end: "Terminal Giwangan" },
-  "3B": { start: "Terminal Giwangan", wayback: "Terminal Condongcatur", end: "Terminal Condongcatur" },
-  "4A": { start: "Terminal Giwangan", wayback: "Terminal Condongcatur", end: "Terminal Condongcatur" },
-  "4B": { start: "Terminal Giwangan", wayback: "Terminal Condongcatur", end: "Terminal Condongcatur" },
-  "5A": { start: "Terminal Jombor", wayback: "Janti Utara", end: "Terminal Jombor" },
-  "5B": { start: "Terminal Jombor", wayback: "Bandara Adisutjipto", end: "Terminal Jombor" },
-  "6": { start: "Park and Ride Gamping", wayback: "Malioboro 3", end: "Park and Ride Gamping" },
-  "8": { start: "Terminal Jombor", wayback: "Ngabean", end: "Terminal Jombor" },
-  "9": { start: "Terminal Giwangan", wayback: "Terminal Jombor", end: "Terminal Giwangan" },
-  "10": { start: "Park and Ride Gamping", wayback: "SGM Kusumanegara - B", end: "Park and Ride Gamping" },
-  "11": { start: "Terminal Giwangan", wayback: "Cik Di Tiro", end: "Terminal Giwangan" },
-  "12": { start: "Terminal Condongcatur", wayback: "Terminal Pakem", end: "Terminal Condongcatur" },
-  "13": { start: "Stadion TGP", wayback: "Malioboro 3", end: "Stadion TGP" },
-  "15": { start: "Terminal Palbapang", wayback: "Malioboro 3", end: "Terminal Palbapang" },
-  "L1": { start: "Terminal Jombor", wayback: "Malioboro 3", end: "Terminal Jombor" },
-  "Transgama 1": { start: "GSP", wayback: "Fakultas Peternakan", end: "GSP" },
-  "Transgama 2": { start: "GSP", wayback: "Fakultas Teknik", end: "GSP" },
-  "Transgama 3": { start: "GSP", wayback: "TILC", end: "GSP" },
-  // Wayback point ("Terminal Pakem") divalidasi terpisah lewat proyeksi
-  // koordinat halte ke garis routes/14.json (jarak hasil ~14.6m, jauh di
-  // bawah toleransi wajar) -- rute 14 & SiBulan 2 jalan di jalan fisik
-  // yang sama (74 halte yang sama persis di-tag ke kedua rute ini di
-  // stops.json), tapi punya file geometri sendiri-sendiri, jadi titik
-  // wayback-nya tetap dicek ulang per file, tidak asal disamakan.
-  "14": { start: "Bandara Adisutjipto", wayback: "Terminal Pakem", end: "Bandara Adisutjipto" },
-  // Wayback point ("Terminal Pakem") divalidasi terpisah lewat proyeksi
-  // GPS ke garis rute (lihat tools/build-sibulan2-directions.js dan
-  // routes/SIBULAN2_stops_ordered.json) -- percobaan split otomatis
-  // berdasarkan geometri gagal (jalur berangkat/pulang tumpang tindih di
-  // data GPS), makanya titik ini di-set manual dari hasil crosswalk
-  // Sibulan2.txt + STOP_ORIENTATION, bukan dari deteksi algoritmik biasa
-  // yang dipakai rute lain di atas.
-  "SiBulan 2": { start: "Bandara Adisutjipto", wayback: "Terminal Pakem", end: "Bandara Adisutjipto" },
-};
+//
+// SEMARANG: sumbernya sekarang dari /api/routes-meta (kolom start_stop_name/
+// wayback_stop_name di tabel koridor, diedit lewat koridor-admin.html) --
+// bukan hardcode di sini lagi. Data Jogja yang tadinya di sini (Terminal
+// Prambanan, Malioboro 3, dst) dihapus total -- BUKAN dipakai sebagai
+// template, karena kode koridor "3A"/"3B" dkk kebetulan tumpang tindih
+// sama punya Semarang dan bakal nyantol ke nama halte yang salah kalau
+// ketinggalan. Koridor yang belum diisi start/wayback-nya di admin page
+// SENGAJA gak muncul di sini sama sekali (lihat komentar di
+// api/routes-meta.js) -- tombol "Show final destination"-nya bakal gak
+// aktif buat koridor itu sampai diisi, alih-alih diam-diam salah.
+const ROUTE_DIRECTIONS = ROUTE_DIRECTIONS_FROM_API;
 
 const ROUTE_WAYPOINTS = Object.fromEntries(
   Object.entries(ROUTE_DIRECTIONS).map(([routeId, dirs]) => [
