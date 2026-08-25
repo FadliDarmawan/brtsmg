@@ -39,6 +39,20 @@ CREATE TABLE koridor (
   agency          TEXT,                        -- 'Trans Semarang', dst
   schedule        JSONB NOT NULL DEFAULT '{"type":"daily","hours":["05:00-21:00"]}',
 
+  -- Setiap rute dianggap round-trip: berangkat dari `start_stop_name`, lari
+  -- sampai titik balik `wayback_stop_name`, balik lagi ke stop FISIK YANG
+  -- SAMA (end == start, selalu -- ini invariant yang dipegang index.html,
+  -- BUKAN kolom terpisah). Dipakai di DUA tempat yang harus konsisten:
+  --   1. shapes/build-all-shapes.js -- fallback buat --start kalau
+  --      shapes.config.json gak eksplisit isi (lihat catatan di sana)
+  --   2. /api/routes-meta -- diserve sebagai ROUTE_DIRECTIONS ke index.html,
+  --      dipakai buat ngitung leg "up"/"down" & tombol "Show final destination"
+  -- Nama di sini HARUS PERSIS sama seperti stop_name di /api/stops, kalau
+  -- meleset dikit aja (typo/singkatan beda) lookup vertex-nya gagal diam-diam
+  -- dan tombol destinasi rute itu berhenti kerja tanpa error yang jelas.
+  start_stop_name    TEXT,
+  wayback_stop_name  TEXT,
+
   display_order   INT NOT NULL,                -- urutan tampil di rail (JANGAN andalkan sort key alami,
                                                  -- lihat catatan ROUTE_IDS di index.html Jogja soal ini)
   is_active       BOOLEAN NOT NULL DEFAULT true,

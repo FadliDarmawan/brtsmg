@@ -88,6 +88,22 @@ async function main() {
   fs.writeFileSync(STOPS_CACHE_PATH, JSON.stringify(stops));
   console.log(`  -> ${stops.length} halte diambil, disimpan sementara di shapes/.stops-cache.json`);
 
+  // start_stop_name dari DB (diisi lewat koridor-admin.html) dipakai sebagai
+  // FALLBACK buat --start kalau shapes.config.json entry-nya kosong -- biar
+  // gak perlu isi nama yang sama di dua tempat yang gampang ke-drift. Kalau
+  // shapes.config.json EKSPLISIT ngisi start, itu yang menang (kadang nama
+  // buat vertex-matching perlu beda dikit dari yang dipakai runtime, lihat
+  // README).
+  console.log(`Mengambil koridor dari ${apiBase}/api/koridor ...`);
+  let koridorByKode = {};
+  try {
+    const koridorList = await fetchJson(`${apiBase}/api/koridor`);
+    koridorByKode = Object.fromEntries(koridorList.map((k) => [k.kode, k]));
+    console.log(`  -> ${koridorList.length} koridor diambil.`);
+  } catch (err) {
+    console.warn(`  ! Gagal ambil /api/koridor (${err.message}) -- lanjut tanpa fallback --start dari DB.`);
+  }
+
   const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8"));
   const kodes = Object.keys(config).filter((k) => !k.startsWith("_"));
 
@@ -108,7 +124,9 @@ async function main() {
     const cfg = config[kode] || {};
     const routeFile = path.join(ROUTES_DIR, `${kode}.json`);
     const cliArgs = [BUILD_SCRIPT, kode, routeFile, STOPS_CACHE_PATH, routeFile];
-    if (cfg.start) cliArgs.push(`--start=${cfg.start}`);
+    const startName = cfg.start || koridorByKode[kode]?.start_stop_name || null;
+    if (startName) cliArgs.push(`--start=${startName}`);
+    else console.warn(`  ! "${kode}": gak ada --start (bukan di shapes.config.json, bukan di koridor.start_stop_name juga) -- lanjut tanpa cek arah.`);
     if (cfg.order) cliArgs.push(`--order=${path.join(ROOT, cfg.order)}`);
     if (cfg.patch) cliArgs.push(`--patch=${path.join(ROOT, cfg.patch)}`);
     if (cfg.reverse) cliArgs.push("--reverse");
