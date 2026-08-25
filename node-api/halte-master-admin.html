@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kelola Grup Halte — Semarang BRT</title>
+<style>
+  :root {
+    --bg: #0F1B1E; --surface: #16262A; --surface-2: #1C3238; --border: #274046;
+    --text: #E7EEEE; --text-dim: #8CA3A8; --amber: #F2A93B;
+    --merge: #4FAE7C; --merge-dim: #2E5C46; --split: #E2664F; --split-dim: #5C332C;
+    --mono: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+  header { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 19px; font-weight: 600; margin: 0; }
+  header h1 .eyebrow { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber); margin-bottom: 4px; }
+  header p { font-size: 12px; color: var(--text-dim); max-width: 640px; line-height: 1.6; margin: 8px 0 0; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 28px; }
+
+  section h2 { font-size: 14px; margin: 0 0 4px; }
+  section .sub { font-size: 12px; color: var(--text-dim); margin: 0 0 14px; }
+
+  .search-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .search-row input { flex: 1; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--sans); font-size: 13px; padding: 9px 12px; }
+
+  .group-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 10px; }
+  .group-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+  .group-nama { font-size: 14px; font-weight: 600; }
+  .group-count { font-family: var(--mono); font-size: 11px; color: var(--amber); background: var(--surface-2); border-radius: 999px; padding: 2px 8px; }
+
+  .member-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--border); }
+  .member-row:first-of-type { border-top: none; }
+  .member-info { flex: 1; }
+  .member-nama { font-size: 13px; }
+  .member-meta { font-family: var(--mono); font-size: 10px; color: var(--text-dim); }
+  .btn-split { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--split); background: var(--split-dim); color: #FBDAD2; cursor: pointer; }
+  .btn-split:hover { filter: brightness(1.15); }
+  .btn-split:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .state-msg { text-align: center; color: var(--text-dim); padding: 30px 20px; font-size: 13px; }
+
+  /* --- combobox (sama pola kayak koridor-admin.html) --- */
+  .combobox { position: relative; }
+  .combobox input { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--sans); font-size: 13px; padding: 8px 10px; width: 100%; }
+  .combobox-list {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px;
+    max-height: 220px; overflow-y: auto; z-index: 50; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    display: none;
+  }
+  .combobox-list.open { display: block; }
+  .combobox-item { padding: 8px 10px; font-size: 12px; cursor: pointer; }
+  .combobox-item .koridor-tag { color: var(--amber); font-family: var(--mono); font-size: 10px; margin-right: 6px; }
+  .combobox-item:hover { background: var(--surface); }
+  .combobox-empty { padding: 8px 10px; font-size: 12px; color: var(--text-dim); font-style: italic; }
+
+  .merge-picker { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: end; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .merge-picker label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); display: block; margin-bottom: 4px; }
+  .merge-vs { font-family: var(--mono); font-size: 11px; color: var(--text-dim); padding-bottom: 9px; }
+  .btn-merge { grid-column: 1 / -1; font-size: 12px; font-weight: 600; padding: 9px 14px; border-radius: 6px; border: 1px solid var(--merge); background: var(--merge-dim); color: #C8F0DA; cursor: pointer; margin-top: 4px; }
+  .btn-merge:hover { filter: brightness(1.15); }
+  .merge-status { font-size: 11px; color: var(--text-dim); grid-column: 1 / -1; }
+  .merge-status.ok { color: var(--merge); }
+  .merge-status.err { color: var(--split); }
+
+  @media (max-width: 600px) { .merge-picker { grid-template-columns: 1fr; } .merge-vs { display: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="eyebrow">Semarang BRT · Data Ops</span>Kelola Grup Halte</h1>
+  <p>
+    Dua alat: (1) cari halte yang UDAH ke-merge otomatis, cek anggotanya, pisahkan
+    yang salah gabung; (2) gabungkan manual dua halte yang ternyata titik fisik
+    yang sama tapi belum ke-deteksi otomatis.
+  </p>
+</header>
+
+<main>
+  <section>
+    <h2>Cari &amp; pisahkan grup yang salah merge</h2>
+    <p class="sub">Cari nama halte, lihat semua anggota grup-nya, klik "Pisahkan" pada yang salah gabung.</p>
+    <div class="search-row">
+      <input type="text" id="group-search" placeholder="Cari nama halte… (misal: kampoeng semarang)" />
+    </div>
+    <div id="group-list"><div class="state-msg">Ketik buat mulai cari, atau biarkan kosong buat lihat semua grup.</div></div>
+  </section>
+
+  <section>
+    <h2>Gabungkan manual</h2>
+    <p class="sub">Pilih dua halte (dari koridor manapun) yang ternyata titik fisik yang sama.</p>
+    <div class="merge-picker" id="merge-picker">
+      <div><label>Halte A</label><div id="combo-a-slot"></div></div>
+      <div class="merge-vs">+</div>
+      <div><label>Halte B</label><div id="combo-b-slot"></div></div>
+      <button class="btn-merge" id="btn-merge">Gabungkan</button>
+      <div class="merge-status" id="merge-status"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const GROUPS_API = "/api/halte-groups";
+const SEARCH_API = "/api/halte-search";
+const SPLIT_API = "/api/halte-split-member";
+const RESOLVE_API = "/api/review-resolve";
+
+let searchDebounce = null;
+document.getElementById("group-search").addEventListener("input", (e) => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => loadGroups(e.target.value.trim()), 300);
+});
+
+async function loadGroups(q) {
+  const list = document.getElementById("group-list");
+  list.innerHTML = `<div class="state-msg">memuat…</div>`;
+  try {
+    const res = await fetch(`${GROUPS_API}?q=${encodeURIComponent(q || "")}`);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const groups = await res.json();
+
+    if (!groups.length) {
+      list.innerHTML = `<div class="state-msg">Gak ada grup yang cocok.</div>`;
+      return;
+    }
+
+    list.innerHTML = "";
+    for (const g of groups) list.appendChild(renderGroup(g));
+  } catch (err) {
+    list.innerHTML = `<div class="state-msg">Gagal memuat: ${err.message}</div>`;
+  }
+}
+loadGroups("");
+
+function renderGroup(g) {
+  const card = document.createElement("div");
+  card.className = "group-card";
+  card.innerHTML = `
+    <div class="group-header">
+      <span class="group-nama">${escapeHtml(g.nama)}</span>
+      <span class="group-count">${g.member_count} anggota</span>
+    </div>
+    <div class="members"></div>
+  `;
+  const membersEl = card.querySelector(".members");
+  for (const m of g.members) {
+    const row = document.createElement("div");
+    row.className = "member-row";
+    row.innerHTML = `
+      <div class="member-info">
+        <div class="member-nama">${escapeHtml(m.nama_halte)}</div>
+        <div class="member-meta">Koridor ${escapeHtml(m.koridor_kode)} · ${m.lat}, ${m.lng}</div>
+      </div>
+      <button class="btn-split">Pisahkan</button>
+    `;
+    row.querySelector(".btn-split").addEventListener("click", (e) => splitMember(m.koridor_halte_id, e.target, card, g.halte_master_id));
+    membersEl.appendChild(row);
+  }
+  return card;
+}
+
+async function splitMember(koridorHalteId, btn, card, masterId) {
+  btn.disabled = true;
+  btn.textContent = "memproses…";
+  try {
+    const res = await fetch(SPLIT_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ koridorHalteId, reason: "manual split via halte-master-admin" }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    // Refresh pencarian biar grup ke-update (anggota berkurang / grup ilang kalau sisa 1)
+    loadGroups(document.getElementById("group-search").value.trim());
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = "Pisahkan";
+    alert("Gagal pisahkan: " + err.message);
+  }
+}
+
+// ---- Combobox buat "gabungkan manual" -----------------------------------
+function createSearchCombobox(placeholder) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "combobox";
+  wrapper.innerHTML = `
+    <input type="text" placeholder="${escapeHtml(placeholder)}" autocomplete="off" />
+    <div class="combobox-list"></div>
+  `;
+  const input = wrapper.querySelector("input");
+  const list = wrapper.querySelector(".combobox-list");
+  let selected = null;
+  let debounce = null;
+
+  async function search(q) {
+    if (q.length < 2) {
+      list.innerHTML = `<div class="combobox-empty">Ketik minimal 2 huruf</div>`;
+      list.classList.add("open");
+      return;
+    }
+    const res = await fetch(`${SEARCH_API}?q=${encodeURIComponent(q)}`);
+    const results = await res.json();
+    list.innerHTML = "";
+    if (!results.length) {
+      list.innerHTML = `<div class="combobox-empty">Gak ada yang cocok</div>`;
+    } else {
+      for (const r of results) {
+        const item = document.createElement("div");
+        item.className = "combobox-item";
+        item.innerHTML = `<span class="koridor-tag">${escapeHtml(r.koridor_kode)}</span>${escapeHtml(r.nama_halte)}`;
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          selected = r;
+          input.value = `[${r.koridor_kode}] ${r.nama_halte}`;
+          list.classList.remove("open");
+        });
+        list.appendChild(item);
+      }
+    }
+    list.classList.add("open");
+  }
+
+  input.addEventListener("input", () => {
+    selected = null;
+    clearTimeout(debounce);
+    debounce = setTimeout(() => search(input.value.trim()), 250);
+  });
+  input.addEventListener("blur", () => setTimeout(() => list.classList.remove("open"), 150));
+
+  return { el: wrapper, getSelected: () => selected };
+}
+
+const comboA = createSearchCombobox("cari halte A…");
+const comboB = createSearchCombobox("cari halte B…");
+document.getElementById("combo-a-slot").appendChild(comboA.el);
+document.getElementById("combo-b-slot").appendChild(comboB.el);
+
+document.getElementById("btn-merge").addEventListener("click", async () => {
+  const statusEl = document.getElementById("merge-status");
+  const a = comboA.getSelected();
+  const b = comboB.getSelected();
+
+  if (!a || !b) {
+    statusEl.textContent = "✗ Pilih Halte A dan Halte B dari dropdown dulu";
+    statusEl.className = "merge-status err";
+    return;
+  }
+  if (a.koridor_halte_id === b.koridor_halte_id) {
+    statusEl.textContent = "✗ Halte A dan B gak boleh sama";
+    statusEl.className = "merge-status err";
+    return;
+  }
+
+  statusEl.textContent = "menggabungkan…";
+  statusEl.className = "merge-status";
+  try {
+    const res = await fetch(RESOLVE_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        koridorHalteAId: a.koridor_halte_id,
+        koridorHalteBId: b.koridor_halte_id,
+        decision: "force_merge",
+        reason: "manual merge via halte-master-admin",
+        resolvedBy: "halte-master-admin",
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    statusEl.textContent = "✓ digabungkan";
+    statusEl.className = "merge-status ok";
+    loadGroups(document.getElementById("group-search").value.trim());
+  } catch (err) {
+    statusEl.textContent = "✗ " + err.message;
+    statusEl.className = "merge-status err";
+  }
+});
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+</script>
+</body>
+</html>
