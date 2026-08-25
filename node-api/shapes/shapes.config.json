@@ -7,8 +7,8 @@
     "reverse": false
   },
   "2": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Tipe C Terboyo",
+    "order": "shapes/order/2.txt",
     "patch": null,
     "reverse": false
   },

@@ -1,0 +1,88 @@
+Terminal Tipe C Terboyo
+RSI Sultan Agung [Selatan]
+LIK [Selatan]
+Kampung Tenggang [Selatan]
+Kampoeng Semarang [Selatan]
+Kaligawe [Selatan]
+Posis
+Raden Patah
+RS Panti Wilasa Dr. Cipto
+SMKN 1
+Pasar Langgar
+Sekolah Mataram
+Dargo
+Taman MT Haryono
+Jurnatan
+Agus Salim
+Aloon-Aloon Semarang
+Bata Johar [Selatan]
+BCA Pemuda [Selatan]
+Balaikota
+Katedral
+RS Kariadi [Timur]
+Ngaglik [Timur]
+Taman Gajahmungkur [Utara]
+Merapi [Timur]
+Elisabeth
+Kagok [Timur]
+Akpol [Timur]
+Don Bosco [Timur]
+Kesatrian [Timur]
+PDAM Jatingaleh [Timur]
+Bukit Sari [Timur]
+Ngesrep [Timur]
+Tembalang
+Srondol [Timur]
+ADA Setiabudi [Timur]
+Sukun [Timur]
+Transmart Setiabudi [Timur]
+Terminal Banyumanik [Timur]
+Makodam [Timur]
+SDN Pudakpayung 01 [Timur]
+BPK [Timur]
+Taman Unyil
+PT Mas
+Assalamah
+Pasar Bandarjo
+Alun-Alun Ungaran
+Terminal Sisemut
+Taman Unyil
+Pramuka
+BPK
+SDN Pudakpayung 01
+Makodam
+Terminal Banyumanik [Barat]
+Transmart Setiabudi [Barat]
+Sukun [Barat]
+ADA Setiabudi [Barat]
+Srondol [Barat]
+Ngesrep [Barat]
+Bukit Sari [Barat]
+Pasar Jatingaleh
+Kesatrian [Barat]
+Don Bosko [Barat]
+Akpol [Barat]
+Kagok [Barat]
+Taman Diponegoro [Barat]
+Merapi [Barat]
+Taman Gajahmungkur [Selatan]
+Ngaglik [Barat]
+RS Kariadi [Barat]
+RST
+Imam Bonjol
+Pierre Tendean
+Balaikota
+Mandiri Pemuda
+Bata Johar [Utara]
+Layur
+Damri
+Stasiun Semarang Tawang
+KAI Terrace
+Pengapon
+Penjaringan
+Pertigaan Posis
+Kaligawe
+Kampoeng Semarang [Utara]
+Kampung Tenggang [Utara]
+LIK [Utara]
+RSI Sultan Agung [Utara]
