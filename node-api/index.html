@@ -3860,7 +3860,17 @@ window.showFinalDestinationsForStop = function (stopName) {
       getForwardStopNames(routeId, activeSeg).forEach(n => willServeNames.add(n));
 
       if (!destPoints.has(dest.name)) {
-        destPoints.set(dest.name, { coord: activeSeg[activeSeg.length - 1], routeIds: new Set() });
+        // Pakai koordinat halte ASLI (dari STOPS/survei), BUKAN vertex garis
+        // rute yang di-snap ke jalan oleh build-route-shapes.js -- dua
+        // sumber itu sering beda beberapa meter (halte di pinggir jalan,
+        // garis rute di tengah jalan), dan origin pill di bawah (baris
+        // ~3892) sudah pakai koordinat asli juga -- jadi ini nyamain,
+        // bukan nambah behavior baru. Fallback ke ujung segmen kalau
+        // dest.name kebetulan bukan stop asli (mestinya gak kejadian buat
+        // destinasi biasa, tapi jaga-jaga).
+        const destStopEntry = STOPS.find(s => s.name === dest.name);
+        const trueCoord = destStopEntry ? [destStopEntry.lon, destStopEntry.lat] : activeSeg[activeSeg.length - 1];
+        destPoints.set(dest.name, { coord: trueCoord, routeIds: new Set() });
       }
       destPoints.get(dest.name).routeIds.add(routeId);
     });
