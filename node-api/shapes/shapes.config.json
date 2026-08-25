@@ -13,8 +13,8 @@
     "reverse": false
   },
   "3A": {
-    "start": null,
-    "order": null,
+    "start": "Mpu Tantular",
+    "order": "shapes/order/3A.txt",
     "patch": null,
     "reverse": false
   },

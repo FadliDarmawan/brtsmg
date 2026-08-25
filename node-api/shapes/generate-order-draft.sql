@@ -18,7 +18,7 @@ SELECT
 FROM koridor_halte kh
 JOIN koridor k       ON k.id = kh.koridor_id
 LEFT JOIN halte_master hm ON hm.id = kh.halte_master_id
-WHERE k.kode = '1'
+WHERE k.kode = '2'
 ORDER BY kh.no_urut;
 
 -- Cara pakai hasilnya:
