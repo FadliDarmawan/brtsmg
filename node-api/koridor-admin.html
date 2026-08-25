@@ -26,11 +26,11 @@
   header h1 { font-size: 19px; font-weight: 600; margin: 0; }
   header h1 .eyebrow { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber); margin-bottom: 4px; }
   .hint { font-size: 12px; color: var(--text-dim); max-width: 420px; text-align: right; line-height: 1.5; }
-  .hint a { color: var(--amber); }
+  .hint code { color: var(--amber); }
 
   main { max-width: 900px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
 
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; overflow: visible; }
   .card.inactive { opacity: 0.55; }
 
   .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
@@ -39,7 +39,7 @@
   .color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border); margin-left: auto; }
 
   .field-grid { display: grid; grid-template-columns: 1.4fr 0.6fr 1fr 1fr 0.6fr; gap: 10px; align-items: end; }
-  .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; margin-top: 10px; }
+  .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; margin-top: 10px; position: relative; z-index: 5; }
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); }
   input[type=text], input[type=number], select {
@@ -56,6 +56,7 @@
   .card-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
   button { font-family: var(--sans); font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; }
   button:hover { filter: brightness(1.12); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
   .btn-save { background: var(--merge-dim); color: #C8F0DA; border-color: var(--merge); }
   .save-status { font-size: 11px; color: var(--text-dim); align-self: center; }
   .save-status.ok { color: var(--merge); }
@@ -63,13 +64,29 @@
 
   .add-card { border-style: dashed; }
   .add-card h2 { font-size: 13px; margin: 0 0 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
-  .add-grid { display: grid; grid-template-columns: 0.8fr 1.6fr 0.5fr 0.6fr; gap: 10px; align-items: end; }
-  .btn-add { background: var(--split-dim); color: #FBDAD2; border-color: var(--split); grid-column: 1 / -1; }
+  .add-grid { display: grid; grid-template-columns: 0.8fr 1.6fr 0.5fr; gap: 10px; align-items: end; }
+  .btn-add { background: var(--split-dim); color: #FBDAD2; border-color: var(--split); }
 
   .state-msg { text-align: center; color: var(--text-dim); padding: 40px 20px; font-size: 14px; }
 
+  .combobox { position: relative; }
+  .combobox input.invalid { border-color: var(--split); background: var(--split-dim); }
+  .combobox-list {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px;
+    max-height: 220px; overflow-y: auto; z-index: 50;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    display: none;
+  }
+  .combobox-list.open { display: block; }
+  .combobox-item { padding: 7px 10px; font-size: 12px; cursor: pointer; }
+  .combobox-item:hover, .combobox-item.active { background: var(--surface); color: var(--amber); }
+  .combobox-empty { padding: 7px 10px; font-size: 12px; color: var(--text-dim); font-style: italic; }
+  .combobox-hint { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+  .combobox-hint.err { color: var(--split); }
+
   @media (max-width: 720px) {
-    .field-grid, .add-grid { grid-template-columns: 1fr 1fr; }
+    .field-grid, .add-grid, .field-grid-2 { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -78,9 +95,8 @@
 <header>
   <h1><span class="eyebrow">Semarang BRT · Data Ops</span>Kelola Koridor</h1>
   <div class="hint">
-    Cuma metadata (judul, warna, jam operasional). Garis rute (GeoJSON) & shape leg
-    tetep diedit lewat file + <code>shapes/build-all-shapes.js</code> --
-    lihat <code>shapes/README.md</code> di repo.
+    Cuma metadata (judul, warna, jam operasional, start/wayback). Garis rute (GeoJSON)
+    & shape leg tetep diedit lewat file + <code>shapes/build-all-shapes.js</code>.
   </div>
 </header>
 
@@ -90,14 +106,21 @@
 
 <script>
 const API = "/api/koridor";
+const STOPS_API = "/api/stops";
 let koridorData = [];
+let STOP_NAMES = [];
 
 async function loadList() {
   const list = document.getElementById("list");
   try {
-    const res = await fetch(API);
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    koridorData = await res.json();
+    const [koridorRes, stopsRes] = await Promise.all([fetch(API), fetch(STOPS_API)]);
+    if (!koridorRes.ok) throw new Error("HTTP " + koridorRes.status + " dari /api/koridor");
+    if (!stopsRes.ok) throw new Error("HTTP " + stopsRes.status + " dari /api/stops");
+
+    koridorData = await koridorRes.json();
+    const stops = await stopsRes.json();
+    STOP_NAMES = [...new Set(stops.map((s) => s.stop_name).filter(Boolean))].sort();
+
     render();
   } catch (err) {
     list.innerHTML = `<div class="state-msg">Gagal memuat: ${err.message}</div>`;
@@ -107,10 +130,7 @@ async function loadList() {
 function render() {
   const list = document.getElementById("list");
   list.innerHTML = "";
-
-  for (const k of koridorData) {
-    list.appendChild(renderCard(k));
-  }
+  for (const k of koridorData) list.appendChild(renderCard(k));
   list.appendChild(renderAddCard());
 }
 
@@ -139,19 +159,7 @@ function renderCard(k) {
       <div class="field"><label>Jam operasional (pisah koma)</label><input type="text" data-field="hours" value="${escapeAttr(hoursStr)}" placeholder="05:00-21:00" /></div>
       <div class="field"><label>Urutan</label><input type="number" data-field="displayOrder" value="${k.display_order}" /></div>
     </div>
-    <div class="field-grid-2">
-      <div class="field">
-        <label>Start / end terminus (buat tombol "Show final destination")</label>
-        <input type="text" data-field="startStopName" value="${escapeAttr(k.start_stop_name || '')}" placeholder="Terminal Mangkang" />
-      </div>
-      <div class="field">
-        <label>Wayback (titik balik)</label>
-        <input type="text" data-field="waybackStopName" value="${escapeAttr(k.wayback_stop_name || '')}" placeholder="Penggaron" />
-      </div>
-    </div>
-    <div class="toggle-row" style="margin-top:6px;">
-      <span style="font-size:11px;color:var(--text-dim);">⚠ Nama di atas harus PERSIS sama seperti stop_name di /api/stops (termasuk tag [Utara]/dst kalau ada) -- kalau meleset, tombol destinasi rute itu diam-diam berhenti kerja. Ini juga dipakai shapes/build-all-shapes.js sebagai fallback --start.</span>
-    </div>
+    <div class="field-grid-2" data-combobox-slot-start></div>
     <div class="toggle-row">
       <input type="checkbox" data-field="isActive" ${k.is_active ? "checked" : ""} id="active-${k.id}" />
       <label for="active-${k.id}">Aktif (tampil di peta)</label>
@@ -169,7 +177,24 @@ function renderCard(k) {
     if (/^#[0-9a-fA-F]{6}$/.test(colorHexInput.value)) colorInput.value = colorHexInput.value;
   });
 
-  card.querySelector(".btn-save").addEventListener("click", () => saveCard(k.id, card));
+  const comboboxSlot = card.querySelector("[data-combobox-slot-start]");
+  const startBox = createCombobox({
+    fieldName: "startStopName",
+    label: 'Start / end terminus (buat tombol "Show final destination")',
+    initialValue: k.start_stop_name || "",
+    placeholder: "cari nama halte…",
+  });
+  const waybackBox = createCombobox({
+    fieldName: "waybackStopName",
+    label: "Wayback (titik balik)",
+    initialValue: k.wayback_stop_name || "",
+    placeholder: "cari nama halte…",
+  });
+  comboboxSlot.appendChild(startBox.el);
+  comboboxSlot.appendChild(waybackBox.el);
+
+  const saveBtn = card.querySelector(".btn-save");
+  saveBtn.addEventListener("click", () => saveCard(k.id, card, { startBox, waybackBox }));
 
   return card;
 }
@@ -183,18 +208,120 @@ function renderAddCard() {
       <div class="field"><label>Kode</label><input type="text" data-field="kode" placeholder="9" /></div>
       <div class="field"><label>Nama / Judul</label><input type="text" data-field="nama" placeholder="Terminal X - Terminal Y" /></div>
       <div class="field"><label>Warna</label><input type="color" data-field="color" value="#4FAE7C" /></div>
+    </div>
+    <div class="field-grid-2" data-combobox-slot-add style="margin-top:10px;"></div>
+    <div style="margin-top:12px;">
       <button class="btn-add">Tambah</button>
     </div>
     <div class="save-status" style="margin-top:8px;"></div>
   `;
-  card.querySelector(".btn-add").addEventListener("click", () => addKoridor(card));
+
+  const comboboxSlot = card.querySelector("[data-combobox-slot-add]");
+  const startBox = createCombobox({ fieldName: "startStopName", label: "Start / end terminus (opsional)", initialValue: "", placeholder: "cari nama halte…" });
+  const waybackBox = createCombobox({ fieldName: "waybackStopName", label: "Wayback (opsional)", initialValue: "", placeholder: "cari nama halte…" });
+  comboboxSlot.appendChild(startBox.el);
+  comboboxSlot.appendChild(waybackBox.el);
+
+  card.querySelector(".btn-add").addEventListener("click", () => addKoridor(card, { startBox, waybackBox }));
   return card;
 }
 
-async function saveCard(id, card) {
+function createCombobox({ fieldName, label, initialValue, placeholder }) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "field combobox";
+  wrapper.innerHTML = `
+    <label>${escapeHtml(label)}</label>
+    <input type="text" data-field="${fieldName}" value="${escapeAttr(initialValue)}" placeholder="${escapeAttr(placeholder || "")}" autocomplete="off" />
+    <div class="combobox-list"></div>
+    <div class="combobox-hint"></div>
+  `;
+
+  const input = wrapper.querySelector("input");
+  const list = wrapper.querySelector(".combobox-list");
+  const hint = wrapper.querySelector(".combobox-hint");
+
+  function isValid(val) {
+    return val === "" || STOP_NAMES.includes(val);
+  }
+
+  function renderHint() {
+    const val = input.value.trim();
+    if (val === "") {
+      hint.textContent = "";
+      hint.className = "combobox-hint";
+      input.classList.remove("invalid");
+    } else if (STOP_NAMES.includes(val)) {
+      hint.textContent = "✓ cocok dengan halte di sistem";
+      hint.className = "combobox-hint";
+      input.classList.remove("invalid");
+    } else {
+      hint.textContent = "✗ gak ketemu nama persis ini di /api/stops -- pilih dari dropdown";
+      hint.className = "combobox-hint err";
+      input.classList.add("invalid");
+    }
+  }
+
+  function openList(filterText) {
+    closeAllCombobox();
+    const q = filterText.trim().toLowerCase();
+    const matches = (q === "" ? STOP_NAMES : STOP_NAMES.filter((n) => n.toLowerCase().includes(q))).slice(0, 40);
+
+    list.innerHTML = "";
+    if (!matches.length) {
+      list.innerHTML = `<div class="combobox-empty">Gak ada halte yang cocok</div>`;
+    } else {
+      for (const name of matches) {
+        const item = document.createElement("div");
+        item.className = "combobox-item";
+        item.textContent = name;
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          input.value = name;
+          renderHint();
+          closeAllCombobox();
+        });
+        list.appendChild(item);
+      }
+    }
+    list.classList.add("open");
+  }
+
+  input.addEventListener("focus", () => openList(input.value));
+  input.addEventListener("input", () => { openList(input.value); renderHint(); });
+  input.addEventListener("blur", () => {
+    setTimeout(() => { list.classList.remove("open"); renderHint(); }, 120);
+  });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { list.classList.remove("open"); input.blur(); }
+  });
+
+  renderHint();
+
+  return {
+    el: wrapper,
+    getValue: () => input.value.trim(),
+    isValid: () => isValid(input.value.trim()),
+    inputEl: input,
+  };
+}
+
+function closeAllCombobox() {
+  document.querySelectorAll(".combobox-list.open").forEach((el) => el.classList.remove("open"));
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".combobox")) closeAllCombobox();
+});
+
+async function saveCard(id, card, boxes) {
   const statusEl = card.querySelector(".save-status");
   const get = (f) => card.querySelector(`[data-field="${f}"]`).value;
   const isActive = card.querySelector('[data-field="isActive"]').checked;
+
+  if (!boxes.startBox.isValid() || !boxes.waybackBox.isValid()) {
+    statusEl.textContent = "✗ Nama start/wayback harus dipilih dari dropdown (atau dikosongkan)";
+    statusEl.className = "save-status err";
+    return;
+  }
 
   const body = {
     id,
@@ -204,8 +331,8 @@ async function saveCard(id, card) {
     schedule: { type: "daily", hours: get("hours").split(",").map((s) => s.trim()).filter(Boolean) },
     displayOrder: Number(get("displayOrder")),
     isActive,
-    startStopName: get("startStopName").trim() || null,
-    waybackStopName: get("waybackStopName").trim() || null,
+    startStopName: boxes.startBox.getValue() || null,
+    waybackStopName: boxes.waybackBox.getValue() || null,
   };
 
   statusEl.textContent = "menyimpan…";
@@ -223,7 +350,7 @@ async function saveCard(id, card) {
   }
 }
 
-async function addKoridor(card) {
+async function addKoridor(card, boxes) {
   const statusEl = card.querySelector(".save-status");
   const get = (f) => card.querySelector(`[data-field="${f}"]`).value;
   const kode = get("kode").trim();
@@ -234,6 +361,11 @@ async function addKoridor(card) {
     statusEl.className = "save-status err";
     return;
   }
+  if (!boxes.startBox.isValid() || !boxes.waybackBox.isValid()) {
+    statusEl.textContent = "✗ Nama start/wayback harus dipilih dari dropdown (atau dikosongkan)";
+    statusEl.className = "save-status err";
+    return;
+  }
 
   statusEl.textContent = "menyimpan…";
   statusEl.className = "save-status";
@@ -241,11 +373,15 @@ async function addKoridor(card) {
     const res = await fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ kode, nama, title: nama, color: get("color") }),
+      body: JSON.stringify({
+        kode, nama, title: nama, color: get("color"),
+        startStopName: boxes.startBox.getValue() || null,
+        waybackStopName: boxes.waybackBox.getValue() || null,
+      }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-    await loadList(); // refresh biar koridor baru langsung keliatan sebagai card biasa
+    await loadList();
   } catch (err) {
     statusEl.textContent = "✗ " + err.message;
     statusEl.className = "save-status err";

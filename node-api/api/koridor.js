@@ -28,7 +28,8 @@ async function handleList(req, res) {
   try {
     const { getPool } = require("../lib/db");
     const { rows } = await getPool().query(
-      `SELECT id, kode, nama, sheet_name_asal, title, color, agency, schedule, display_order, is_active
+      `SELECT id, kode, nama, sheet_name_asal, title, color, agency, schedule,
+              start_stop_name, wayback_stop_name, display_order, is_active
        FROM koridor ORDER BY display_order`
     );
     res.status(200).json(rows);
@@ -38,7 +39,7 @@ async function handleList(req, res) {
 }
 
 async function handleCreate(req, res) {
-  const { kode, nama, title, color, agency, schedule, displayOrder } = req.body || {};
+  const { kode, nama, title, color, agency, schedule, displayOrder, startStopName, waybackStopName } = req.body || {};
   if (!kode || !nama) {
     res.status(400).json({ error: "kode dan nama wajib diisi" });
     return;
@@ -49,10 +50,14 @@ async function handleCreate(req, res) {
       const nextOrder = displayOrder ?? Number(maxRows[0].max) + 1;
 
       const { rows } = await client.query(
-        `INSERT INTO koridor (kode, nama, title, color, agency, schedule, display_order)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO koridor (kode, nama, title, color, agency, schedule, start_stop_name, wayback_stop_name, display_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING id`,
-        [kode, nama, title || nama, color || "#888888", agency || null, JSON.stringify(schedule || { type: "daily", hours: ["05:00-21:00"] }), nextOrder]
+        [
+          kode, nama, title || nama, color || "#888888", agency || null,
+          JSON.stringify(schedule || { type: "daily", hours: ["05:00-21:00"] }),
+          startStopName || null, waybackStopName || null, nextOrder,
+        ]
       );
 
       await client.query(
@@ -73,7 +78,7 @@ async function handleCreate(req, res) {
 }
 
 async function handleUpdate(req, res) {
-  const { id, title, color, agency, schedule, displayOrder, isActive } = req.body || {};
+  const { id, title, color, agency, schedule, displayOrder, isActive, startStopName, waybackStopName } = req.body || {};
   if (!id) {
     res.status(400).json({ error: "id wajib diisi" });
     return;
@@ -91,6 +96,8 @@ async function handleUpdate(req, res) {
   if (schedule !== undefined) { sets.push(`schedule = $${i++}`); values.push(JSON.stringify(schedule)); }
   if (displayOrder !== undefined) { sets.push(`display_order = $${i++}`); values.push(displayOrder); }
   if (isActive !== undefined) { sets.push(`is_active = $${i++}`); values.push(isActive); }
+  if (startStopName !== undefined) { sets.push(`start_stop_name = $${i++}`); values.push(startStopName || null); }
+  if (waybackStopName !== undefined) { sets.push(`wayback_stop_name = $${i++}`); values.push(waybackStopName || null); }
 
   if (!sets.length) {
     res.status(400).json({ error: "Gak ada field yang diupdate" });

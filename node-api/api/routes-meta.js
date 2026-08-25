@@ -67,7 +67,10 @@ module.exports = async (req, res) => {
       }
     }
 
-    res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+    // s-maxage pendek (bukan 3600) -- ini cache EDGE CDN Vercel, terpisah
+    // dari ETag di bawah. Lihat catatan lengkap di api/stops.js kenapa 3600
+    // bikin edit di koridor-admin.html kerasa lama nongolnya di peta.
+    res.setHeader("Cache-Control", "public, s-maxage=5, stale-while-revalidate=30");
     res.setHeader("ETag", etag);
     res.status(200).json({ routeMeta, routeIds, routeDirections });
   } catch (err) {
