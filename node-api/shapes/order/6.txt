@@ -1,0 +1,106 @@
+RSND
+Fakultas Kedokteran Undip
+Rusunawa Undip
+Masjid Hijau Sigawe
+Bulusari
+Polines
+Kecamatan Banyumanik [Selatan]
+SMPN 27 [Selatan]
+Ngesrep [Barat]
+Bukit Sari [Barat]
+Pasar Jatingaleh
+Kesatrian [Barat]
+Don Bosko [Barat]
+Akpol [Barat]
+Kagok [Barat]
+Taman Diponegoro [Barat]
+Elisabeth
+Kagok [Barat]
+Wonotingal
+Sisingamangaraja
+Pasar Sisingamangaraja
+Candi
+Akpol [Timur]
+Semeru [Selatan]
+Tengger [Selatan]
+Tengger Barat [Selatan]
+Semeru Barat [Timur]
+Taman Semeru [Utara]
+Taman Telaga Bodas [Utara]
+Kesatrian [Timur]
+PDAM Jatingaleh [Timur]
+PLN Kesatrian
+Karang Rejo Tengah [Selatan]
+SMA Teuku Umar [Selatan]
+Teuku Umar [Selatan]
+Kampung Pentul [Selatan]
+Unika SCU Kampus Bendan Duwur [Selatan]
+Unisvet [Selatan]
+Akpelni [Selatan]
+Talangsari [Selatan]
+Dewi Sartika [Timur]
+Delik Sari [Barat]
+Puri Sartika [Barat]
+Trangkil [Barat]
+Taman Nirwana [Barat]
+Akbid [Barat]
+Ayodya [Barat]
+Indomaret Taman Siswa
+Gang Marga Satwa
+Lapangan Banaran
+GSG Unnes
+Fakultas Ilmu Pendidikan Unnes
+Fakultas Ilmu Keolahragaan Unnes
+Fakultas Teknik Unnes
+Fakultas Hukum Unnes
+Fakultas Ilmu Sosial Unnes
+BNI Unnes
+SDN Sekaran 01
+MI Roudlotul Huda
+Sekere Unnes
+Taman Anggur
+Rektorat Unnes
+Mintorogo
+Ayodya [Timur]
+Akbid [Timur]
+Taman Nirwana [Timur]
+Trangkil [Timur]
+Puri Santika [Timur]
+Delik Sari [Timur]
+Dewi Sartika [Barat]
+Talangsari [Utara]
+Akpelni [Utara]
+Unisvet [Utara]
+Unika SCU Kampus Bendan Duwur [Utara]
+Kampung Pentul [Utara]
+Teuku Umar [Utara]
+SMA Teuku Umar [Utara]
+Karang Rejo Tengah [Utara]
+PLN Jatingaleh
+Kesatrian [Barat]
+Taman Telaga Bodas [Selatan]
+Taman Semeru [Selatan]
+Semeru Barat [Barat]
+Tengger Barat [Utara]
+Tengger [Utara]
+Semeru [Utara]
+Akpol [Barat]
+Kagok [Barat]
+Taman Diponegoro [Barat]
+Elisabeth
+Kagok [Timur]
+Wonotingal [Timur]
+Sisingamangaraja [Timur]
+Pasar Sisingamangaraja [Timur]
+Candi [Timur]
+Akpol [Timur]
+Don Bosco [Timur]
+Kesatrian [Timur]
+PDAM Jatingaleh [Timur]
+Bukit Sari [Timur]
+Ngesrep [Timur]
+SMPN 27 [Utara]
+Kecamatan Banyumanik [Utara]
+Muladi Dome Undip
+Fakultas Psikologi Undip
+Fakultas Ekonomika dan Bisnis Undip

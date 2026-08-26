@@ -37,8 +37,8 @@
     "reverse": false
   },
   "6": {
-    "start": null,
-    "order": null,
+    "start": "RSND",
+    "order": "shapes/order/6.txt",
     "patch": null,
     "reverse": false
   },
