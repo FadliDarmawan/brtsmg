@@ -43,14 +43,14 @@
     "reverse": false
   },
   "7": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Tipe C Terboyo",
+    "order": "shapes/order/7.txt",
     "patch": null,
     "reverse": false
   },
   "8": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Cangkiran",
+    "order": "shapes/order/8.txt",
     "patch": null,
     "reverse": false
   },
