@@ -67,8 +67,8 @@
     "reverse": false
   },
   "F1B": {
-    "start": null,
-    "order": null,
+    "start": "Koramil Ngaliyan",
+    "order": "shapes/order/F1B.txt",
     "patch": null,
     "reverse": false
   },
