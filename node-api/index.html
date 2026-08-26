@@ -1567,6 +1567,21 @@ const ROUTE_WAYPOINTS = Object.fromEntries(
 // to need this pattern yet, so left empty rather than guessed at.
 const ROUTE_HUB_LOOPS = {};
 
+// SEMARANG: rute yang genuinely satu LOOP TUNGGAL (bukan pergi-pulang ke
+// titik yang sama kayak koridor BRT nomor biasa) -- contoh: Bus D (UNDIP),
+// yang jalan muter satu arah terus balik ke titik awal, gak pernah "belah 2
+// arah" kayak koridor lain. Untuk rute ini, SEMUA halte nunjukin destinasi
+// yang SAMA (label tetap di sini), dan klik destinasi itu nge-highlight
+// SATU LOOP UTUH (bukan potongan leg tertentu) -- lihat
+// highlightRouteToLoopLabel & pengecekan di getStopDestinations.
+// Sengaja hardcode di sini (bukan dari DB/koridor-admin.html) -- sama
+// kayak ROUTE_HUB_LOOPS di atas, ini kasus khusus yang jarang & butuh mata
+// manusia buat mastiin rutenya beneran loop tunggal, bukan sesuatu yang
+// aman ditebak otomatis dari data halte.
+const ROUTE_LOOP_LABEL = {
+  "D": "Loop Kampus Undip",
+};
+
 // Maps a stop's actual/normal name (as it appears in stops.json and
 // route files — the string ROUTE_WAYPOINTS and every lookup keys off of)
 // to the shorter name that should actually be shown to riders, e.g.
@@ -3558,6 +3573,13 @@ window.highlightAllRoutesForStop = function (stopName) {
 // tries getJunctionSegments first (handles dual-pole junctions like PTC A
 // correctly) and falls back to a plain direct segment.
 function getForwardSegmentToDestination(routeId, fromStopName, dest) {
+  if (dest.isFixedLoop) {
+    // Loop tunggal (ROUTE_LOOP_LABEL) -- gak ada leg buat dihitung, "maju
+    // ke arah destinasi" ya seluruh garis loop-nya, apapun posisi
+    // fromStopName sekarang.
+    const shape = ROUTE_SHAPES[routeId];
+    return shape ? shape.coordinates : null;
+  }
   if (dest.isHubLoop) {
     const hv = getHubLoopVertices(routeId);
     return hv ? hv.shape.coordinates.slice(hv.hubVertex, hv.endVertex + 1) : null;
@@ -4191,6 +4213,50 @@ window.highlightRouteToHubLoop = function (routeId, fromStopName) {
   }
 };
 
+// Rute loop tunggal (lihat ROUTE_LOOP_LABEL) -- gak ada "leg" sama sekali,
+// jadi gak butuh getRouteLegVertices/getForwardSegmentToDestination kayak
+// openRouteDetailFromStop. Klik destinasinya cuma nge-highlight SELURUH
+// garis rute (shape.coordinates apa adanya -- build-route-shapes.js udah
+// mastiin ini loop tertutup, mulai & berakhir di vertex yang sama), bukan
+// motong ke satu vertex tujuan tertentu, karena buat loop tunggal "tujuan
+// akhir"-nya ya balik lagi ke titik awal muternya.
+window.highlightRouteToLoopLabel = function (routeId, fromStopName) {
+  if (window.currentStopPopup) {
+    suppressStopPopupTagClear = true;
+    window.currentStopPopup.remove();
+    window.currentStopPopup = null;
+    suppressStopPopupTagClear = false;
+  }
+  if (fromStopName) {
+    const fromEntry = STOPS.find(s => s.name === fromStopName);
+    if (fromEntry) setSelectedStop([fromEntry.lon, fromEntry.lat], fromStopName);
+  }
+
+  const shape = ROUTE_SHAPES[routeId];
+  if (!shape || !shape.coordinates || !shape.coordinates.length) return;
+  const meta = ROUTE_META[routeId];
+  const color = meta ? meta.color : null;
+
+  const activeSeg = shape.coordinates;
+  setActiveSegment(activeSeg, color);
+  setBeforeSegment([], color);
+  setRouteDimming(routeId);
+  setStopsFilterByNamesWithPassed(getForwardStopNames(routeId, activeSeg), []);
+
+  clearDestLabels();
+  const label = ROUTE_LOOP_LABEL[routeId];
+  if (label) {
+    addDestLabel(activeSeg[activeSeg.length - 1], [routeId], getStopDisplay(label).base);
+    quickDestinationPickActive = true;
+  }
+
+  const lons = activeSeg.map(c => c[0]), lats = activeSeg.map(c => c[1]);
+  map.fitBounds(
+    [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]],
+    { padding: 70, maxZoom: 15, duration: 500 }
+  );
+};
+
 // ---- Route detail view (hash-routed: index.html#/routes/<ID>) ---------
 // Reached by picking a route (rail/search — see selectRouteFromRail) or
 // by an old ?route=<id> link going through route.html's redirect. Rather
@@ -4699,6 +4765,13 @@ function setSelectedStop(coords, name) {
 // (renders each as a "-> destination" button) and openStopInfoPanel
 // (renders each as its own route/destination row).
 function getStopDestinations(sv, name) {
+  // Rute loop tunggal (ROUTE_LOOP_LABEL) -- short-circuit total, gak lewat
+  // logic leg/hub-loop di bawah sama sekali. SEMUA halte di rute ini
+  // nunjukin destinasi yang SAMA, apapun posisinya.
+  if (ROUTE_LOOP_LABEL[sv.route]) {
+    return [{ name: ROUTE_LOOP_LABEL[sv.route], isHubLoop: false, isFixedLoop: true }];
+  }
+
   const dests = [];
   const seen = new Set();
   const addDest = (destName, isHubLoop) => {
@@ -4846,7 +4919,9 @@ function showPopup(coords, name, services) {
         // manual multi-destination stops, and hub-loop stops like T.O.W
         // or Terminal Benowo) — one button per destination it finds.
         const destPart = getStopDestinations(sv, name).map(d =>
-          d.isHubLoop
+          d.isFixedLoop
+            ? `<button class="dest-btn" onclick="highlightRouteToLoopLabel('${jsStr(sv.route)}','${jsStr(name)}')">&rarr; ${d.name}</button>`
+            : d.isHubLoop
             ? `<button class="dest-btn" onclick="highlightRouteToHubLoop('${jsStr(sv.route)}','${jsStr(name)}')">&rarr; ${d.name}</button>`
             : `<button class="dest-btn" onclick="openRouteDetailFromStop('${jsStr(sv.route)}','${jsStr(name)}','${jsStr(d.name)}')">&rarr; ${getStopDisplay(d.name).base}</button>`
         ).join("");

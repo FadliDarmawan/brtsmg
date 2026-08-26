@@ -78,7 +78,7 @@ async function handleCreate(req, res) {
 }
 
 async function handleUpdate(req, res) {
-  const { id, title, color, agency, schedule, displayOrder, isActive, startStopName, waybackStopName } = req.body || {};
+  const { id, kode, title, color, agency, schedule, displayOrder, isActive, startStopName, waybackStopName } = req.body || {};
   if (!id) {
     res.status(400).json({ error: "id wajib diisi" });
     return;
@@ -90,6 +90,7 @@ async function handleUpdate(req, res) {
   const values = [];
   let i = 1;
 
+  if (kode !== undefined) { sets.push(`kode = $${i++}`); values.push(kode); }
   if (title !== undefined) { sets.push(`title = $${i++}`); values.push(title); }
   if (color !== undefined) { sets.push(`color = $${i++}`); values.push(color); }
   if (agency !== undefined) { sets.push(`agency = $${i++}`); values.push(agency); }
@@ -120,6 +121,10 @@ async function handleUpdate(req, res) {
 
     res.status(200).json({ ok: true });
   } catch (err) {
+    if (kode !== undefined && (err.message.includes("koridor_kode_key") || err.message.includes("duplicate key"))) {
+      res.status(409).json({ error: `Kode koridor "${kode}" udah dipakai koridor lain` });
+      return;
+    }
     res.status(500).json({ error: `Gagal update koridor: ${err.message}` });
   }
 }

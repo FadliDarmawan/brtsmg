@@ -34,7 +34,7 @@
   .card.inactive { opacity: 0.55; }
 
   .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .kode-badge { font-family: var(--mono); font-size: 12px; font-weight: 700; background: var(--surface-2); border-radius: 6px; padding: 4px 9px; color: var(--amber); }
+  .kode-input { font-family: var(--mono); font-size: 12px; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 9px; color: var(--amber); width: 70px; text-align: center; }
   .nama-label { font-size: 13px; color: var(--text-dim); }
   .color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border); margin-left: auto; }
 
@@ -143,7 +143,7 @@ function renderCard(k) {
 
   card.innerHTML = `
     <div class="card-header">
-      <span class="kode-badge">${escapeHtml(k.kode)}</span>
+      <input type="text" class="kode-input" data-field="kode" value="${escapeAttr(k.kode)}" title="Kode koridor (nama file /routes/<kode>.json HARUS diganti manual juga kalau ini diubah)" />
       <span class="nama-label">${escapeHtml(k.nama)}</span>
       <span class="color-dot" style="background:${escapeHtml(k.color || '#888')}"></span>
     </div>
@@ -325,6 +325,7 @@ async function saveCard(id, card, boxes) {
 
   const body = {
     id,
+    kode: get("kode"),
     title: get("title"),
     color: get("colorHex"),
     agency: get("agency"),
