@@ -31,8 +31,8 @@
     "reverse": false
   },
   "5": {
-    "start": null,
-    "order": null,
+    "start": "PRPP",
+    "order": "shapes/order/5.txt",
     "patch": null,
     "reverse": false
   },

@@ -1,0 +1,93 @@
+PRPP
+Marina (Sekolah Kristen Terang Bangsa) [Timur]
+Bundaran Puri Anjasmoro [Timur]
+Universitas Telogorejo [Timur]
+Gapensi [Timur]
+Kelurahan Karangayu [Timur]
+Karangayu [Utara]
+Amarta [Utara]
+Amarta [Selatan]
+Karangayu [Selatan]
+Cakrawala 2 [Selatan]
+SMA Kesatrian 1 [Utara]
+Bandeng Juwana Pamularsih [Utara]
+SPBU Pamularsih [Timur]
+STIE Dharma Putra [Timur]
+Sam Poo Kong [Timur]
+Kaligarang [Utara]
+RS Kariadi [Barat]
+RST
+Imam Bonjol
+Pierre Tendean
+Balaikota
+RS Hermina Pandanaran
+Agusta [Utara]
+Gramedia Pandanaran [Utara]
+Simpang Lima [Utara]
+GKII Parousia [Timur]
+Wonderia [Timur]
+Java Mall [Timur]
+Cinde [Utara]
+Asrama TNI Mrican [Utara]
+PDAM Kedungmundu [Timur]
+Kelurahan Kedungmundu [Barat]
+SMAN 15 [Utara]
+Kini Jaya [Utara]
+RSWN [Timur]
+Harmony Residence [Timur]
+SLBN Semarang [Timur]
+Perum Sendangmulyo [Timur]
+Dadapan [Timur]
+Pasar Meteseh [Timur]
+Dinar Elok [Selatan]
+Dinar Asri [Selatan]
+Dinar Mas [Selatan]
+Victoria Residence [Selatan]
+Ar-Ridho [Barat]
+Bukit Kencana
+Perum Kelapa Gading
+Ar-Ridho [Timur]
+Victoria Residence [Utara]
+Dinar Mas [Utara]
+Dinar Asri [Utara]
+Dinar Elok [Utara]
+Pasar Meteseh [Barat]
+Dadapan [Barat]
+Perum Sendangmulyo [Barat]
+SLBN Semarang [Barat]
+Harmony Residence [Barat]
+RSWN [Barat]
+Kini Jaya [Selatan]
+SMAN 15 [Selatan]
+Kelurahan Kedungmundu [Timur]
+PDAM Kedungmundu [Barat]
+Asrama TNI Mrican [Selatan]
+Cinde [Selatan]
+Java Mall [Barat]
+Wonderia [Barat]
+Karanglo
+SMAN 1
+Simpang Lima [Utara]
+Tentrem
+Lombok Idjo
+SMK Theresiana
+Petempen
+Hotel Gumaya
+BCA Pemuda [Selatan]
+Balaikota
+Katedral
+RS Kariadi [Timur]
+Kaligarang [Selatan]
+Sam Poo Kong [Barat]
+STIE Dharma Putra [Barat]
+SPBU Pamularsih [Barat]
+Bandeng Juwana Pamularsih [Selatan]
+Mintojowo
+SMA Kesatrian 1 [Selatan]
+Cakrawala 1 [Utara]
+Kelurahan Karangayu [Barat]
+Gapensi [Barat]
+Universitas Telogorejo [Barat]
+Bundaran Puri Anjasmoro [Barat]
+Simpang PRPP
+Bandara
