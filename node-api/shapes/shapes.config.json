@@ -25,8 +25,8 @@
     "reverse": false
   },
   "4": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Cangkiran",
+    "order": "shapes/order/4.txt",
     "patch": null,
     "reverse": false
   },

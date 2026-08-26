@@ -1,0 +1,114 @@
+Terminal Cangkiran
+Pertigaan Cangkiran [Barat]
+Puskesmas Mijen [Barat]
+Lapangan Jatisari [Barat]
+Jatisari [Barat]
+Pasar Ace [Barat]
+SPBU Mijen [Barat]
+Koramil Mijen [Barat]
+SMPN 23 [Barat]
+RSUD Mijen
+Kemantren [Barat]
+Pasar Mijen [Barat]
+Sabhara [Barat]
+Beranda Bali
+Palapa Jatibarang [Barat]
+Bundaran BSB [Barat]
+BSB City
+Galunggung [Barat]
+Konveksi [Barat]
+Kelurahan Wates [Barat]
+Lapas Kedungpane [Barat]
+Lawas [Barat]
+Pandana [Barat]
+Swalayan Goori [Barat]
+Beringin [Barat]
+Wahyu Utomo [Barat]
+Kecamatan Ngaliyan [Barat]
+Panembahan Senopati [Barat]
+Ngaliyan Square (UIN Kampus 3) [Barat]
+Aneka Jaya (UIN Kampus 2) [Barat]
+Pasar Jerakah (UIN Kampus 1) [Barat]
+Krapyak [Utara]
+Pengadilan [Utara]
+Muradi [Utara]
+Kalibanteng [Utara]
+Cakrawala 1 [Utara]
+Karangayu [Utara]
+Amarta [Utara]
+ADA Siliwangi [Utara]
+Pasar Bulu [Utara]
+Imam Bonjol
+Pierre Tendean
+Balaikota
+RS Hermina Pandanaran
+Agusta [Utara]
+Gramedia Pandanaran [Utara]
+Simpang Lima [Utara]
+Tentrem
+Lombok Idjo
+SMK Theresiana
+Petempen
+Hotel Gumaya
+Bata Johar [Utara]
+Layur
+Damri
+Mpu Tantular
+Stasiun Semarang Tawang
+KAI Terrace
+Pengapon
+Penjaringan
+Posis
+Raden Patah
+RS Panti Wilasa Dr. Cipto
+SMKN 1
+Pasar Langgar
+Sekolah Mataram
+Dargo
+Taman MT Haryono
+Jurnatan
+Agus Salim
+Aloon-Aloon Semarang
+Unaki Petek
+Stasiun Semarang Poncol [Selatan]
+Abimanyu [Timur]
+Pierre Tendean
+Balaikota
+Pasar Bulu [Selatan]
+ADA Siliwangi [Selatan]
+Amarta [Selatan]
+Karangayu [Selatan]
+Cakrawala 2 [Selatan]
+Kalibanteng [Selatan]
+Muradi [Selatan]
+Pengadilan [Selatan]
+Krapyak [Selatan]
+Pasar Jerakah (UIN Kampus 1) [Timur]
+Aneka Jaya (UIN Kampus 2) [Timur]
+Ngaliyan Square (UIN Kampus 3) [Timur]
+Panembahan Senopati [Timur]
+Kecamatan Ngaliyan [Timur]
+Wahyu Utomo [Timur]
+Beringin [Timur]
+Swalayan Goori [Timur]
+Pandana [Timur]
+Lawas [Timur]
+Lapas Kedungpane [Timur]
+Kelurahan Wates [Timur]
+Konveksi [Timur]
+Galunggung [Timur]
+SPBU BSB
+Bundaran BSB [Timur]
+Palapa Jatibarang [Selatan]
+UNIKA SCU Kampus BSB
+Sabhara [Timur]
+Pasar Mijen [Timur]
+Kemantren [Timur]
+SMPN 23 [Timur]
+Koramil Mijen [Timur]
+SPBU Mijen [Timur]
+Pasar Ace [Timur]
+Jatisari [Timur]
+Lapangan Jatisari [Timur]
+Puskesmas Mijen [Timur]
+Pertigaan Cangkiran [Timur]
