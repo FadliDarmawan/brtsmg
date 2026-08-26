@@ -107,5 +107,11 @@
     "order": null,
     "patch": null,
     "reverse": false
+  },
+  "D": {
+    "start": "Rusunawa Undip",
+    "order": "shapes/order/D.txt",
+    "patch": null,
+    "reverse": false
   }
 }
