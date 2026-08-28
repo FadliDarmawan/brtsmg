@@ -20,8 +20,8 @@ Jangli
 Kasipah [Timur]
 SMA Sint Louis [Timur]
 Kesatrian [Timur]
-PDAM Jatingaleh [Timur]
-Pasar Jatingaleh [Barat]
+PDAM Jatingaleh
+Pasar Jatingaleh
 Kesatrian [Barat]
 Don Bosko [Barat]
 Akpol [Barat]
@@ -35,7 +35,7 @@ Pintu Timur RSDK
 Simpang Kyai Saleh
 Menteri Supeno
 SMAN 1
-Simpang Lima [Utara]
+Simpang Lima
 Tentrem
 Lombok Idjo
 SMK Theresiana
@@ -46,6 +46,6 @@ Balaikota
 Imam Bonjol
 Abimanyu [Barat]
 Stasiun Semarang Poncol [Utara]
-Unaki Petek
+Unaki Petek [Utara]
 Layur
 Damri
