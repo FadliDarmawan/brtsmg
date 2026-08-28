@@ -1,0 +1,90 @@
+Terminal Tipe C Terboyo
+RSI Sultan Agung [Selatan]
+LIK [Selatan]
+Kampung Tenggang [Selatan]
+Kampoeng Semarang [Selatan]
+Kaligawe [Selatan]
+Masjid Baitul Hidayah [Timur]
+Pasar Waru [Timur]
+Panti Asuhan Ikhlasul Amal [Timur]
+Kampung Batursari [Timur]
+Indomaret Tambak Dalam [Utara]
+SMP Muhammadiyah 7 [Utara]
+SMPN 4 [Timur]
+Plewan [Timur]
+SMA Kesatrian 2 [Timur]
+Jolotundo [Selatan]
+MAJT [Selatan]
+Pasar Burung Karimata [Selatan]
+Upgris
+Sidodadi
+Halmahera
+Kompol Maksum
+Bulog Sompok [Utara]
+SMPN 37 [Utara]
+SMPN 39 [Timur]
+Bakso Doa Ibu [Timur]
+Mangga [Timur]
+SDN Lamper Kidul 02 [Timur]
+Cinde [Utara]
+Pertigaan Mrican [Barat]
+Kedondong [Barat]
+SPBU Lamper Tengah [Barat]
+RS Bhayangkara [Utara]
+Pasar Gayamsari [Utara]
+Beruang
+SMK Tarcisius [Barat]
+Sendangsari [Barat]
+SMPN 15 [Barat]
+SDN Kalicari 01 [Barat]
+Kelurahan Tlogosari Kulon [Barat]
+Parang Kusumo
+Gusti Putri
+Parang Kesit
+Satrio Manah
+Super Indo Tlogosari
+Taman Sekar Jagad
+Parang Baris
+Ratu Ratih
+Taman Parang Kembang
+Kelurahan Tlogosari Kulon [Timur]
+SDN Kalicari 01 [Timur]
+SMPN 15 [Timur]
+Sendangsari [Timur]
+SMK Tarcisius [Timur]
+Pasar Gayamsari [Selatan]
+RS Bhayangkara [Selatan]
+SPBU Lamper Tengah [Timur]
+Kedondong [Timur]
+Pertigaan Mrican
+Cinde [Selatan]
+SDN Lamper Kidul 02 [Barat]
+Mangga [Barat]
+Bakso Doa Ibu [Barat]
+SMPN 39 [Barat]
+SMPN 37 [Selatan]
+Bulog Sompok [Selatan]
+Sedes
+Bangkong MT Haryono
+Sidodadi Stadion Diponegoro
+Karangturi Kampung Baris
+Pasar Langgar
+Pasar Burung Karimata [Utara]
+MAJT [Utara]
+Jolotundo [Utara]
+SMA Kesatrian 2 [Barat]
+Plewan [Barat]
+SMPN 4 [Barat]
+SMP Muhammadiyah 7 [Selatan]
+Indomaret Tambak Dalam [Selatan]
+Batursari [Utara]
+Panti Asuhan Ikhlasul Amal [Utara]
+Pasar Waru [Utara]
+Masjid Baitul Hidayah [Utara]
+Pojok Kaligawe
+Pertigaan Posis
+Kaligawe [Utara]
+Kampoeng Semarang [Utara]
+Kampung Tenggang [Utara]
+LIK [Utara]
+RSI Sultan Agung [Utara]
