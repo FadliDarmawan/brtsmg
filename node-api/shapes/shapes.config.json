@@ -73,38 +73,38 @@
     "reverse": false
   },
   "F2A": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Tipe C Terboyo",
+    "order": "shapes/order/F2A.txt",
     "patch": null,
     "reverse": false
   },
   "F2B": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Tipe C Terboyo",
+    "order": "shapes/order/F2B.txt",
     "patch": null,
     "reverse": false
   },
   "F2C": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Tipe C Terboyo",
+    "order": "shapes/order/F2C.txt",
     "patch": null,
     "reverse": false
   },
   "F3": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Banyumanik [Barat]",
+    "order": "shapes/order/F3.txt",
     "patch": null,
     "reverse": false
   },
   "F4A": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Gunungpati",
+    "order": "shapes/order/F4A.txt",
     "patch": null,
     "reverse": false
   },
   "F4B": {
-    "start": null,
-    "order": null,
+    "start": "Terminal Gunungpati",
+    "order": "shapes/order/F4B.txt",
     "patch": null,
     "reverse": false
   },
