@@ -89,12 +89,12 @@ Kagok [Barat]
 Taman Diponegoro [Barat]
 Elisabeth
 Kagok [Timur]
-Wonotingal [Timur]
-Sisingamangaraja [Timur]
-Pasar Sisingamangaraja [Timur]
-Candi [Timur]
+Wonotingal
+Sisingamangaraja
+Pasar Sisingamangaraja
+Candi
 Akpol [Timur]
-Don Bosco [Timur]
+Don Bosko [Timur]
 Kesatrian [Timur]
 PDAM Jatingaleh [Timur]
 Bukit Sari [Timur]
