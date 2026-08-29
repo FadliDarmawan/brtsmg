@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Yogyakarta route map</title>
+<title>Semarang Public Transport Online Interactive Map</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/7.0.0/fuse.min.js"></script>
@@ -751,6 +751,8 @@
     :root { --rail-gap: 10px; --rail-w: 46px; }
     .rail-badge { font-size: 11px; padding: 0 6px; min-width: 26px; height: 22px; }
     .rail-row { padding: 8px 4px; } /* slightly taller tap target on touch */
+    #mobile-sheet-title img#brand-logo { height: 24px; }
+    #mobile-sheet-title span { font-size: 13px; }
   }
 
   /* ---- Sheet (shared: same title + search + toggle + route-list panel
@@ -789,12 +791,14 @@
   }
   #mobile-sheet-header { flex: none; padding: 0 20px 14px; position: relative; }
   #mobile-sheet-title {
-    font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    font-size: 23px; font-weight: 800; color: #F2B705; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #mobile-sheet-title img#brand-logo {
+    height: 30px; width: auto; display: block; flex: none;
   }
   #mobile-sheet-title span {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    font-size: 15px; font-weight: 500; color: #1c1c1a; margin-left: 6px;
+    font-size: 15px; font-weight: 600; color: #1055A3; letter-spacing: -0.01em;
   }
   #mobile-sheet-search { flex: none; padding: 0 16px 6px; position: relative; }
   #mobile-sheet-toggle {
@@ -1074,7 +1078,10 @@
 <div id="mobile-sheet" data-state="peek">
   <div id="mobile-sheet-draghandle"><div id="mobile-sheet-bar"></div></div>
   <div id="mobile-sheet-header">
-    <div id="mobile-sheet-title">Yogyakarta<span>By Haruno</span></div>
+    <div id="mobile-sheet-title">
+      <img id="brand-logo" src="./src/logo-lab-transport.svg" alt="Lab Transport" />
+      <span>Fadli Darmawan</span>
+    </div>
   </div>
   <div id="mobile-sheet-search"></div>
   <button id="mobile-sheet-toggle" type="button">
