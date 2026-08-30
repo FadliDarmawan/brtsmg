@@ -752,7 +752,6 @@
     .rail-badge { font-size: 11px; padding: 0 6px; min-width: 26px; height: 22px; }
     .rail-row { padding: 8px 4px; } /* slightly taller tap target on touch */
     #brand-logo-plate { width: 34px; height: 34px; padding: 4px; }
-    #mobile-sheet-title img#brand-logo { height: 26px; }
     #brand-collab-sep, #brand-creator { font-size: 13px; }
     #brand-title { font-size: 18px; }
     #brand-subtitle { font-size: 11px; }
@@ -803,10 +802,15 @@
   #brand-logo-plate {
     background: #1055A3; border-radius: 50%; flex: none;
     display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px; padding: 5px;
+    width: 40px; height: 40px; padding: 5px; overflow: hidden;
   }
   #mobile-sheet-title img#brand-logo {
-    height: 30px; width: auto; display: block; flex: none;
+    /* Sumber logo-nya lebar (crest bundar + tulisan wordmark di sampingnya,
+       viewBox ~372x96) -- object-fit:cover + object-position:left nge-crop
+       biar cuma bagian crest bundarnya (sisi kiri) yang tampil di plate
+       ini, bukan seluruh logo yang keremes/meluber dari lingkaran. */
+    width: 100%; height: 100%; display: block;
+    object-fit: cover; object-position: left center;
   }
   #brand-collab-sep {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
