@@ -751,7 +751,8 @@
     :root { --rail-gap: 10px; --rail-w: 46px; }
     .rail-badge { font-size: 11px; padding: 0 6px; min-width: 26px; height: 22px; }
     .rail-row { padding: 8px 4px; } /* slightly taller tap target on touch */
-    #mobile-sheet-title img#brand-logo { height: 28px; }
+    #brand-logo-plate { width: 34px; height: 34px; padding: 4px; }
+    #mobile-sheet-title img#brand-logo { height: 26px; }
     #brand-collab-sep, #brand-creator { font-size: 13px; }
     #brand-title { font-size: 18px; }
     #brand-subtitle { font-size: 11px; }
@@ -799,8 +800,13 @@
   #brand-collab {
     display: flex; align-items: center; gap: 8px;
   }
+  #brand-logo-plate {
+    background: #1055A3; border-radius: 50%; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; padding: 5px;
+  }
   #mobile-sheet-title img#brand-logo {
-    height: 34px; width: auto; display: block; flex: none;
+    height: 30px; width: auto; display: block; flex: none;
   }
   #brand-collab-sep {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -1106,7 +1112,7 @@
   <div id="mobile-sheet-header">
     <div id="mobile-sheet-title">
       <div id="brand-collab">
-        <img id="brand-logo" src="./src/logo-lab-transport.svg" alt="Lab Transport" />
+        <div id="brand-logo-plate"><img id="brand-logo" src="./src/logo-lab-transport.svg" alt="Lab Transport" /></div>
         <span id="brand-collab-sep">&times;</span>
         <span id="brand-creator">Fadli Darmawan</span>
       </div>
