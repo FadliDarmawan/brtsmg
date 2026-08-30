@@ -751,7 +751,8 @@
     :root { --rail-gap: 10px; --rail-w: 46px; }
     .rail-badge { font-size: 11px; padding: 0 6px; min-width: 26px; height: 22px; }
     .rail-row { padding: 8px 4px; } /* slightly taller tap target on touch */
-    #mobile-sheet-title img#brand-logo { height: 36px; }
+    #mobile-sheet-title img#brand-logo { height: 28px; }
+    #brand-collab-sep, #brand-creator { font-size: 13px; }
     #brand-title { font-size: 18px; }
     #brand-subtitle { font-size: 11px; }
     #brand-caption { font-size: 9.5px; }
@@ -793,21 +794,32 @@
   }
   #mobile-sheet-header { flex: none; padding: 0 20px 14px; position: relative; }
   #mobile-sheet-title {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  #brand-collab {
+    display: flex; align-items: center; gap: 8px;
   }
   #mobile-sheet-title img#brand-logo {
-    height: 44px; width: auto; display: block; flex: none;
+    height: 34px; width: auto; display: block; flex: none;
   }
-  #brand-text {
+  #brand-collab-sep {
+    font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px; font-weight: 400; color: rgba(28,28,26,0.35); flex: none;
+  }
+  #brand-creator {
+    font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px; font-weight: 700; color: #1055A3; letter-spacing: -0.01em; line-height: 1.15;
+  }
+  #brand-product {
     display: flex; flex-direction: column; gap: 1px; min-width: 0; /* min-width:0 lets the caption ellipsis instead of overflowing the sidebar */
   }
   #brand-title {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    font-size: 21px; font-weight: 800; color: #1055A3; letter-spacing: -0.01em; line-height: 1.15;
+    font-size: 22px; font-weight: 800; color: #1055A3; letter-spacing: -0.01em; line-height: 1.15;
   }
   #brand-subtitle {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    font-size: 12.5px; font-weight: 600; color: #1c1c1a; line-height: 1.25;
+    font-size: 12.5px; font-weight: 600; color: #1c1c1a; line-height: 1.25; margin-top: 2px;
   }
   #brand-caption {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -1093,11 +1105,15 @@
   <div id="mobile-sheet-draghandle"><div id="mobile-sheet-bar"></div></div>
   <div id="mobile-sheet-header">
     <div id="mobile-sheet-title">
-      <img id="brand-logo" src="./src/logo-lab-transport.svg" alt="Lab Transport" />
-      <div id="brand-text">
+      <div id="brand-collab">
+        <img id="brand-logo" src="./src/logo-lab-transport.svg" alt="Lab Transport" />
+        <span id="brand-collab-sep">&times;</span>
+        <span id="brand-creator">Fadli Darmawan</span>
+      </div>
+      <div id="brand-product">
         <div id="brand-title">Semarang</div>
         <div id="brand-subtitle">Public Transport Map</div>
-        <div id="brand-caption">Fadli Darmawan &middot; brtsmg.vercel.app</div>
+        <div id="brand-caption">brtsmg.vercel.app</div>
       </div>
     </div>
   </div>
