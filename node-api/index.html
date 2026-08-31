@@ -4523,9 +4523,19 @@ function selectRouteDetailStop(id, vertex) {
   // marker showPopup uses elsewhere for "this is the one you picked"),
   // on top of "not dimmed" -- since every other remaining stop is ALSO
   // not dimmed, opacity alone doesn't clearly single this one out.
-  const coordAtVertex = shape.coordinates[vertex];
+  // Pakai koordinat halte ASLI (STOPS), BUKAN coordAtVertex (posisi
+  // ke-snap ke garis rute oleh build-route-shapes.js) -- dua sumber itu
+  // bisa beda beberapa meter kalau titik survei halte gak persis nempel
+  // di tengah jalan. Semua pemanggilan setSelectedStop LAIN di file ini
+  // udah pakai koordinat asli (lihat baris ~4025, ~4224); ini nyamain,
+  // bukan behavior baru -- biar cincin highlight-nya ketemu di titik
+  // yang sama persis kayak dot halte-nya, bukan geser ke tengah jalan.
   const stopAtVertex = (ROUTE_ORDERED_STOPS[id] || []).find(s => s.vertex === vertex);
-  if (coordAtVertex && stopAtVertex) setSelectedStop(coordAtVertex, stopAtVertex.name);
+  if (stopAtVertex) {
+    const trueEntry = STOPS.find(s => s.name === stopAtVertex.name);
+    const coordAtVertex = shape.coordinates[vertex];
+    setSelectedStop(trueEntry ? [trueEntry.lon, trueEntry.lat] : coordAtVertex, stopAtVertex.name);
+  }
   renderRouteDetailList(id);
 }
 
