@@ -2422,6 +2422,7 @@ function extractOrderedStops(raw, lines) {
 // Directional shapes, keyed by route id, populated by loadRoutes() below.
 // { "1A": { coordinates: [[lon,lat],...], stopIndex: Map(name -> vertex), loop: bool } }
 const ROUTE_SHAPES = {};
+window.ROUTE_SHAPES = ROUTE_SHAPES; // debug: cek di console via Object.keys(ROUTE_SHAPES).length
 
 // Raw line geometry per route id (array of coordinate arrays), populated
 // by loadRoutes() below. Used to fit the map to every serving route's
@@ -5097,6 +5098,7 @@ function pathLength(coords) {
 // a separate edge type; they fall out naturally, since two different
 // routes' edges can share the same canonical `to`/`from` stop name.
 let STOP_GRAPH = new Map();
+window.STOP_GRAPH = STOP_GRAPH; // debug: cek di console via STOP_GRAPH.size / STOP_GRAPH
 
 function addEdge(from, to, routeId, weight, coords) {
   if (!from || !to || from === to || !(weight > 0)) return;
@@ -5106,6 +5108,7 @@ function addEdge(from, to, routeId, weight, coords) {
 
 function buildStopGraph() {
   STOP_GRAPH = new Map();
+  window.STOP_GRAPH = STOP_GRAPH; // re-sync: reassigned above, not just mutated
   for (const routeId of Object.keys(ROUTE_SHAPES)) {
     const shape = ROUTE_SHAPES[routeId];
     // [name, vertex] pairs, in travel order (every route's shape is one
