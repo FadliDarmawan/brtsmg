@@ -2816,13 +2816,23 @@ map.on("load", async () => {
     id: "stops-circle",
     type: "circle",
     source: "stops",
+    // Zoomed out (whole-city view), rendering every stop dot at once is
+    // just visual noise -- hundreds of dots overlapping across a dozen
+    // corridors, drowning out the route lines themselves. minzoom hides
+    // the layer entirely below that level (cheaper than opacity:0 -- the
+    // renderer skips it altogether), then a short interpolate fades it
+    // in over the next zoom step rather than popping instantly, same
+    // pattern as stops-label's fade below. TUNE THESE TWO NUMBERS to
+    // taste -- minzoom is where dots start existing at all, the second
+    // zoom stop in each interpolate is where they reach full opacity.
+    minzoom: 12,
     paint: {
       "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 1.5, 10, 2.5, 13, 5, 15, 8],
       "circle-color": ["case", ["get", "inactive"], "#9aa0a6", "#E73D4A"],
-      "circle-opacity": ["case", ["get", "inactive"], 0.45, 1],
+      "circle-opacity": ["interpolate", ["linear"], ["zoom"], 12, 0, 13, ["case", ["get", "inactive"], 0.45, 1]],
       "circle-stroke-width": 2,
       "circle-stroke-color": "#ffffff",
-      "circle-stroke-opacity": ["case", ["get", "inactive"], 0.6, 1]
+      "circle-stroke-opacity": ["interpolate", ["linear"], ["zoom"], 12, 0, 13, ["case", ["get", "inactive"], 0.6, 1]]
     }
   });
 
@@ -3446,11 +3456,19 @@ function setStopsPassedNames(names) {
   map.setPaintProperty("stops-circle", "circle-color", CARTOGRAPHY_EMBED
     ? "#ffffff"
     : ["case", ["get", "inactive"], "#9aa0a6", isPassed, "#9aa0a6", "#E73D4A"]);
+  // Wrapped in the same zoom-fade interpolate as the layer's own default
+  // circle-opacity/circle-stroke-opacity (see map.addLayer above) -- this
+  // setPaintProperty call REPLACES that default wholesale, so without
+  // re-wrapping it here too, selecting/highlighting a route while zoomed
+  // out would undo the "hide dots until zoomed in" decluttering just for
+  // that route's stops.
   map.setPaintProperty("stops-circle", "circle-opacity", [
-    "case", ["get", "inactive"], 0.45, isPassed, 0.4, 1
+    "interpolate", ["linear"], ["zoom"], 12, 0, 13,
+    ["case", ["get", "inactive"], 0.45, isPassed, 0.4, 1]
   ]);
   map.setPaintProperty("stops-circle", "circle-stroke-opacity", [
-    "case", ["get", "inactive"], 0.6, isPassed, 0.55, 1
+    "interpolate", ["linear"], ["zoom"], 12, 0, 13,
+    ["case", ["get", "inactive"], 0.6, isPassed, 0.55, 1]
   ]);
   if (!CARTOGRAPHY_EMBED) {
     map.setPaintProperty("stops-label", "text-color", [
