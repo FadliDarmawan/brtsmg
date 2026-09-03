@@ -275,16 +275,6 @@
     text-transform: uppercase; color: #fff; background: rgba(28,28,26,0.85);
     padding: 2px 7px; border-radius: 999px;
   }
-  .stop-bus-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 18px; height: 18px; border-radius: 50%; font-size: 10px;
-    flex: none; margin-right: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.35);
-    animation: stop-bus-badge-pulse 2s ease-in-out infinite;
-  }
-  @keyframes stop-bus-badge-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.12); }
-  }
   .no-service {
     font-size: 12px; color: rgba(40,40,38,0.5); font-style: italic;
   }
@@ -469,76 +459,6 @@
   body.zoomed-out .plan-marker-dot { display: block; }
   body.zoomed-out .plan-marker-compact { display: flex; }
 
-  /* ---- Live bus markers (SiBulan 2 - dua armada di rute yang sama,
-     posisinya di-poll dari database lewat /api/location). Posisi marker
-     di-update via setLngLat, elemen DOM-nya tidak pernah dibuat ulang --
-     supaya gerakannya smooth, bukan kedip.
-
-     PENTING soal bug sebelumnya: kalau elemen root marker adalah <div>
-     block-level tanpa width eksplisit, MapLibre nempelinnya via
-     `position: absolute` -- karena "auto" width sebuah elemen absolute
-     dihitung dari containing block terdekat (bukan dari isi kontennya),
-     hasilnya elemen itu ngambil lebar container peta, bukan lebar
-     ikonnya sendiri (kesannya "melebar mengambang" pas di-zoom). Makanya
-     root elemen di sini WAJIB `display: inline-flex` + tanpa width auto
-     yang nurun dari block layout -- supaya ukurannya ngikutin konten
-     (ikon), titik ankernya presisi di satu koordinat, "pakem" pas zoom. ---- */
-  .bus-marker {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    /* JANGAN set `position` di sini. MapLibre sendiri butuh elemen marker
-       ini `position: absolute; top:0; left:0;` (lihat .maplibregl-marker
-       di maplibre-gl.css bawaan library) supaya transform: translate(x,y)
-       yang dia pasang itungannya dari titik (0,0) container peta. Dulu di
-       sini ada `position: relative`, dan karena elemen ini juga otomatis
-       kebagian class "maplibregl-marker" dari library (element yang sama
-       persis, bukan dibungkus ulang), aturan kita ini MENANG di cascade
-       (sama-sama 1 class selector, tapi <style> kita taruh setelah <link>
-       CSS-nya MapLibre di <head>) dan diam-diam nimpa position:absolute
-       jadi position:relative. Akibatnya posisi marker ikut normal document
-       flow (beda-beda tiap marker tergantung urutannya di DOM), BUKAN dari
-       titik (0,0) peta -- baru KETAMBAHAN transform offset di atasnya.
-       Ini ketahuan setelah download langsung package maplibre-gl@4.7.1 dan
-       bandingkan CSS aslinya, bukan asumsi. Ukuran width/height 30px di
-       bawah tetap dipertahankan (nggak masalah, cuma belum tentu ini
-       akar masalah utamanya). */
-    width: 30px;
-    height: 30px;
-  }
-  .bus-marker svg { display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); }
-  .bus-marker.is-stale { opacity: 0.4; }
-
-  /* Ikon segitiga (zoom jauh) vs ikon bus (zoom deket) -- keduanya
-     dirender sekaligus di DOM, cuma satu yang display:block di satu
-     waktu, di-toggle dari JS (lihat updateBusMarkerZoomLevel) supaya
-     ganti-icon-nya instan tanpa perlu bikin ulang marker. Placeholder
-     dulu (bentuk generik) -- gampang diganti begitu SVG final ada,
-     tinggal replace isi TRIANGLE_ICON_SVG / BUS_ICON_SVG di script. */
-  .bus-marker-icon-far { display: block; }
-  .bus-marker-icon-near { display: none; }
-  .bus-marker.zoomed-in .bus-marker-icon-far { display: none; }
-  .bus-marker.zoomed-in .bus-marker-icon-near { display: block; }
-
-  /* ---- Info popup pas ikon bus di-tap -- sengaja REUSE class .glass-tag
-     / .tag-eyebrow / .popup-title yang sama persis dipakai popup halte
-     (lihat sekitar baris 4780), biar dua-duanya konsisten satu bahasa
-     visual, bukan 2 gaya popup yang beda sendiri-sendiri. Cuma tambahan
-     kecil di bawah ini buat baris info (update terakhir, kecepatan). ---- */
-  .bus-info-row {
-    display: flex; justify-content: space-between; gap: 12px;
-    font-size: 12.5px; color: #4a4a48; padding: 3px 0;
-  }
-  .bus-info-row span:first-child { color: rgba(60,60,58,0.6); }
-  .popup-bus-direction {
-    font-size: 12.5px; color: rgba(60,60,58,0.75); margin: -4px 0 9px;
-  }
-  .popup-bus-direction strong { color: #1c1c1a; font-weight: 700; }
-  .bus-popup-title {
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  }
 
   /* Floating "-> destination" pills dropped at the origin stop and each
      final-destination endpoint (see addDestLabel) -- used by both "Show
@@ -1037,12 +957,6 @@
 <body>
 
 <div id="map"></div>
-<button id="locateBusBtn" onclick="locateBuses()" title="Cari bus" style="
-  position: absolute; bottom: 24px; right: 12px; z-index: 5;
-  width: 44px; height: 44px; border-radius: 50%; border: none;
-  background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-  font-size: 20px; display: none; cursor: pointer;
-">🚌</button>
 
 <div id="route-rail">
   <button id="route-rail-toggle" type="button" title="Show all routes">
@@ -4381,16 +4295,6 @@ function renderRouteDetailList(id) {
       stops = stops.filter(s => s.vertex >= Math.min(lo, hi) && s.vertex <= Math.max(lo, hi));
     }
   }
-  // Halte mana yang ada bus-nya SEKARANG -- dicocokkan dari nearestStopName
-  // yang di-cache tiap poll (lihat pollBusLocations), dibatasi ke bus yang
-  // route_id-nya cocok rute ini DAN (leg "all" atau arahnya cocok leg yang
-  // lagi dibuka) -- filter yang SAMA persis dipakai busShouldBeVisible,
-  // jadi badge di daftar ini konsisten sama bus yang kelihatan di peta.
-  const busesAtStop = {}; // { [stopName]: [{busId,color}, ...] }
-  for (const [busId, loc] of Object.entries(busLatestLoc)) {
-    if (!loc || !loc.nearestStopName || !busShouldBeVisible(loc)) continue;
-    (busesAtStop[loc.nearestStopName] ||= []).push({ busId, color: BUS_INSTANCES[busId].color });
-  }
 
   // Re-rendering this list (e.g. every time a stop row is clicked, to
   // update the passed/current highlighting) used to reset scrollTop to 0
@@ -4407,17 +4311,12 @@ function renderRouteDetailList(id) {
       ? [...new Set(stopEntry.services.filter(x => x.route !== id).map(x => x.route))]
       : [];
     const badges = transferIds.map(routeBadgeHtml).join("");
-    const busesHere = busesAtStop[s.name] || [];
-    const busBadges = busesHere
-      .map(b => `<span class="stop-bus-badge" style="background:${b.color}" title="${BUS_INSTANCES[b.busId].label} ada di sini">🚌</span>`)
-      .join("");
     const passed = routeDetailCurrentVertex != null && s.vertex < routeDetailCurrentVertex;
     const current = s.vertex === routeDetailCurrentVertex;
     const rowClass = ["route-detail-row", passed ? "is-passed" : "", current ? "is-current" : ""]
       .filter(Boolean).join(" ");
     return `<button class="${rowClass}" data-name="${s.name}" data-vertex="${s.vertex}">
       <span class="route-detail-index">${i + 1}</span>
-      ${busBadges}
       <span class="route-detail-name">${stopTitleHtml(s.name)}</span>
       ${hub}
       ${badges ? `<span class="route-detail-badges">${badges}</span>` : ""}
@@ -4438,7 +4337,6 @@ function applyRouteDetailLeg(id, leg) {
   setSelectedStop(null);
   renderRouteDetailTabs(id);
   renderRouteDetailList(id);
-  updateBusMarkerVisibility(); // rute/arah baru dibuka -- filter bus langsung, jangan nunggu poll berikutnya
 
   const meta = ROUTE_META[id];
   const shape = ROUTE_SHAPES[id];
@@ -4569,23 +4467,7 @@ function openRouteDetail(id) {
   routeDetailTitle.textContent = hours ? `Stops along this route · ${hours}` : "Stops along this route";
   renderRouteSwitcher(id);
   applyRouteDetailLeg(id, "all"); // also renders the tabs + list and fits the map
-  scrollRouteDetailToBus(id);
   return true;
-}
-
-// Sekali aja pas rute baru dibuka (bukan tiap refresh tick -- itu udah
-// dijaga sendiri lewat prevScrollTop di renderRouteDetailList), geser
-// daftar halte ke baris yang ada badge bus-nya, biar nggak perlu nyari
-// manual di antara puluhan halte.
-function scrollRouteDetailToBus(id) {
-  const hasBus = Object.entries(busLatestLoc).some(
-    ([busId, loc]) => loc && loc.routeId === id && loc.nearestStopName
-  );
-  if (!hasBus) return;
-  requestAnimationFrame(() => {
-    const badgeEl = routeDetailList.querySelector(".stop-bus-badge");
-    if (badgeEl) badgeEl.closest(".route-detail-row")?.scrollIntoView({ block: "center" });
-  });
 }
 
 function closeRouteDetail() {
@@ -4602,7 +4484,6 @@ function closeRouteDetail() {
   setRouteOverview(null);
   setStopsFilter(null);
   setSelectedStop(null);
-  updateBusMarkerVisibility(); // balik ke plain view -- semua bus tampil lagi
 }
 
 // Called from a stop popup's "-> destination" button (see showPopup) in
@@ -5301,478 +5182,6 @@ function addPlanMarker(coord, html) {
   planMarkers.push(marker);
 }
 
-// ---------------------------------------------------------------------------
-// Live bus markers -- SiBulan 2 (Adisutjipto - Pakem), 2 armada fisik di
-// rute yang sama. Posisi didapat dari /api/location (database), di-poll
-// tiap beberapa detik, geser marker yang sudah ada -- TIDAK membuat ulang
-// elemen DOM tiap tick, biar gerakannya mulus.
-//
-// Tampilan: icon-only, TANPA label yang selalu nempel (dulu ada bar
-// "Bus 1" yang melebar penuh layar -- itu bug CSS width, sudah dibenerin,
-// tapi sekalian didesain ulang: default clean cuma ikon, info muncul pas
-// di-tap). Ikon ganti otomatis sesuai level zoom peta: segitiga pas zoom
-// jauh, bus pas zoom deket. SVG di bawah ini PLACEHOLDER -- tinggal ganti
-// isi TRIANGLE_ICON_SVG / BUS_ICON_SVG begitu SVG final ada, tidak perlu
-// ubah logic lain.
-// ---------------------------------------------------------------------------
-
-const BUS_API_URL = "/api/location";
-const BUS_POLL_INTERVAL_MS = 5000;
-// Kalau sebuah bus belum kirim update lebih dari ini, marker-nya dibikin
-// pudar (is-stale) supaya kelihatan datanya lagi nggak fresh, bukan
-// dihilangkan (driver mungkin cuma masuk terowongan/sinyal jelek sebentar).
-const BUS_STALE_AFTER_MS = 2 * 60 * 1000;
-// Level zoom peta (bukan zoom device) di mana ikon ganti dari segitiga ke
-// bus -- sesuaikan angkanya kalau perubahannya kerasa kecepetan/kelambatan.
-const BUS_ICON_ZOOM_THRESHOLD = 15;
-
-// Warna ikon bus SENGAJA disamakan persis dengan warna resmi rute SiBulan
-// 2 (ROUTE_META["SiBulan 2"].color = "#FB8500") untuk KEDUA bus -- bus1
-// sebelumnya kepasang salah pakai warna SiBulan 1 (#FFB703), kelihatan
-// beda sendiri padahal dua-duanya jalan di rute yang sama.
-const BUS_INSTANCES = {
-  bus1: { label: "Bus 1", color: "#FB8500" },
-  bus2: { label: "Bus 2", color: "#FB8500" },
-};
-
-// Placeholder -- segitiga generik menghadap ke atas (nanti di-rotate lewat
-// heading). Ganti isi string SVG ini kapan saja SVG final sudah ada.
-const TRIANGLE_ICON_SVG = (color) => `
-  <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="9,1 17,16 1,16" fill="${color}" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" />
-  </svg>
-`;
-// Placeholder -- lingkaran + emoji bus. Ganti isi string SVG ini kapan
-// saja SVG final ada (idealnya bentuk bus beneran, bukan emoji).
-const BUS_ICON_SVG = (color) => `
-  <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="15" cy="15" r="13" fill="${color}" stroke="#fff" stroke-width="2" />
-    <text x="15" y="20" font-size="14" text-anchor="middle">🚌</text>
-  </svg>
-`;
-
-let busMarkers = {}; // { bus1: maplibregl.Marker, bus2: maplibregl.Marker }
-let busLatestLoc = {}; // { bus1: {lat,lng,heading,speed,updatedAt}, bus2: {...} } -- dipakai isi popup info
-
-// Daftar halte terurut per arah (sama persis yang dipakai driver.html buat
-// "posisi sekarang") -- dipakai buat nunjukin "Posisi: <nama halte>" di
-// popup info bus, bukan cuma koordinat mentah.
-let busOrderedStops = null;
-fetch("/routes/SIBULAN2_stops_ordered.json")
-  .then((res) => (res.ok ? res.json() : null))
-  .then((data) => { busOrderedStops = data; })
-  .catch((err) => console.warn("Gagal memuat daftar halte terurut buat popup bus:", err));
-
-function haversineMetersForBus(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const toRad = (d) => (d * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(a));
-}
-
-function nearestStopNameForBus(direction, lat, lng) {
-  if (!busOrderedStops || !direction) return null;
-  const list = busOrderedStops[direction];
-  if (!list || list.length === 0) return null;
-  let best = null;
-  for (const stop of list) {
-    const dist = haversineMetersForBus(lat, lng, stop.lat, stop.lng);
-    if (!best || dist < best.dist) best = { name: stop.name, dist };
-  }
-  return best;
-}
-let busPopup = null; // cuma 1 popup kebuka dalam satu waktu
-
-function busMarkerHtml(busId) {
-  const { color } = BUS_INSTANCES[busId];
-  return `
-    <div class="bus-marker" data-bus-id="${busId}">
-      <div class="bus-marker-icon-far">${TRIANGLE_ICON_SVG(color)}</div>
-      <div class="bus-marker-icon-near">${BUS_ICON_SVG(color)}</div>
-    </div>
-  `;
-}
-
-const DIRECTION_LABELS_MAP = {
-  to_pakem: "Terminal Pakem",
-  to_adisutjipto: "Bandara Adisutjipto",
-};
-
-function showBusInfoPopup(busId, coord) {
-  const { label } = BUS_INSTANCES[busId];
-  const loc = busLatestLoc[busId];
-
-  const updatedText = loc ? `${Math.round((Date.now() - loc.updatedAt) / 1000)}s lalu` : "-";
-  const hasActiveRit = loc && loc.direction != null;
-  const directionText = hasActiveRit
-    ? `Menuju <strong>${DIRECTION_LABELS_MAP[loc.direction] || loc.direction}</strong>`
-    : "Rit belum dimulai";
-  const passengerText = hasActiveRit && loc.passengerCount != null ? `${loc.passengerCount} orang` : "-";
-  const nearest = hasActiveRit ? nearestStopNameForBus(loc.direction, loc.lat, loc.lng) : null;
-  const positionText = nearest ? nearest.name : "-";
-
-  if (busPopup) busPopup.remove();
-  // className "glass-popup" + struktur .glass-tag/.tag-eyebrow/.popup-title
-  // di bawah SAMA PERSIS dengan popup halte (lihat sekitar baris 4780) --
-  // sengaja disamakan, bukan cuma mirip, biar popup bus & popup halte
-  // kerasa 1 sistem, bukan 2 desain beda yang kebetulan nempel di peta
-  // yang sama.
-  busPopup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, className: "glass-popup", offset: 18 })
-    .setLngLat(coord)
-    .setHTML(`
-      <div class="glass-tag">
-        <div class="tag-eyebrow">Bus</div>
-        <div class="popup-title bus-popup-title">
-          <span class="route-badge" style="color:#FB8500; background:#FB850022; border-color:#FB850055;">SiBulan 2</span>
-          <span>${label}</span>
-        </div>
-        <div class="popup-bus-direction">${directionText}</div>
-        <div class="popup-routes">
-          <div class="bus-info-row"><span>Posisi</span><span>${positionText}</span></div>
-          <div class="bus-info-row"><span>Penumpang</span><span>${passengerText}</span></div>
-          <div class="bus-info-row"><span>Updated</span><span>${updatedText}</span></div>
-        </div>
-      </div>
-    `)
-    .addTo(map);
-}
-
-function ensureBusMarker(busId, coord) {
-  if (busMarkers[busId]) {
-    busMarkers[busId].setLngLat(coord);
-    return busMarkers[busId];
-  }
-  const wrap = document.createElement("div");
-  wrap.innerHTML = busMarkerHtml(busId).trim();
-  const el = wrap.firstElementChild;
-
-  el.addEventListener("click", (e) => {
-    e.stopPropagation(); // jangan sampai tap ikon ke-anggep tap peta kosong
-    showBusInfoPopup(busId, busMarkers[busId].getLngLat());
-  });
-
-  const marker = new maplibregl.Marker({ element: el, anchor: "center", rotationAlignment: "map" })
-    .setLngLat(coord)
-    .addTo(map);
-  busMarkers[busId] = marker;
-  updateBusMarkerZoomLevel(marker); // set kelas zoom awal begitu marker dibuat
-  return marker;
-}
-
-// Toggle kelas "zoomed-in" (segitiga <-> bus) sesuai level zoom peta saat
-// ini. Dipanggil sekali per marker baru, dan tiap kali peta di-zoom.
-function updateBusMarkerZoomLevel(marker) {
-  const el = marker.getElement();
-  el.classList.toggle("zoomed-in", map.getZoom() >= BUS_ICON_ZOOM_THRESHOLD);
-}
-
-map.on("zoom", () => {
-  Object.values(busMarkers).forEach(updateBusMarkerZoomLevel);
-});
-
-// ---------------------------------------------------------------------------
-// Filter bus marker mana yang ditampilin, NGIKUT state route-detail yang
-// SUDAH ADA di app ini (routeIdFromHash() + routeDetailLeg) -- bukan bikin
-// sumber kebenaran baru yang terpisah:
-//   - Nggak ada rute dibuka (plain view)        -> semua bus ditampilin.
-//   - Rute dibuka, tab "Full route"              -> cuma bus yang route_id-nya
-//                                                    cocok sama rute itu.
-//   - Rute dibuka, tab arah ("up"/"down")         -> ditambah filter arah:
-//     "up" = leg start->wayback (ke arah wayback point, "to_pakem" untuk
-//     SiBulan 2), "down" = leg wayback->end ("to_adisutjipto").
-// ---------------------------------------------------------------------------
-function busShouldBeVisible(loc) {
-  const routeId = routeIdFromHash();
-  if (!routeId) return true; // plain view -- tampilkan semua bus
-
-  if (!loc.routeId || loc.routeId !== routeId) return false; // bus ini bukan di rute yang lagi dibuka
-
-  if (routeDetailLeg === "all") return true;
-  const wantDirection = routeDetailLeg === "up" ? "to_pakem" : "to_adisutjipto";
-  return loc.direction === wantDirection;
-}
-
-function updateBusMarkerVisibility() {
-  for (const [busId, marker] of Object.entries(busMarkers)) {
-    const loc = busLatestLoc[busId];
-    const visible = loc ? busShouldBeVisible(loc) : false;
-    marker.getElement().style.display = visible ? "" : "none";
-  }
-}
-
-// Kalau panel detail rute lagi kebuka buat rute yang sama kayak bus-bus
-// ini, refresh daftar haltenya supaya badge bus (lihat renderRouteDetailList)
-// ikut update posisinya tiap tick -- bukan cuma pas panel pertama dibuka.
-// renderRouteDetailList sendiri sudah save/restore scrollTop, jadi aman
-// dipanggil berulang tanpa bikin daftar "lompat" ke atas.
-function refreshRouteDetailBusBadgesIfOpen() {
-  const routeId = routeIdFromHash();
-  if (routeId && routeDetailPanel.style.display !== "none") {
-    renderRouteDetailList(routeId);
-  }
-}
-
-async function pollBusLocations() {
-  try {
-    const res = await fetch(BUS_API_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-
-    for (const busId of Object.keys(BUS_INSTANCES)) {
-      const loc = data[busId];
-      if (!loc) continue; // belum pernah kirim lokasi sama sekali
-      // Halte terdekat (sesuai arah) di-cache di sini setiap tick -- dipakai
-      // buat badge bus di daftar halte (renderRouteDetailList) TANPA perlu
-      // hitung ulang tiap render, dan tanpa nunggu popup di-tap dulu.
-      const nearest = loc.direction ? nearestStopNameForBus(loc.direction, loc.lat, loc.lng) : null;
-      loc.nearestStopName = nearest ? nearest.name : null;
-      busLatestLoc[busId] = loc;
-
-      const marker = ensureBusMarker(busId, [loc.lng, loc.lat]);
-      const isStale = Date.now() - loc.updatedAt > BUS_STALE_AFTER_MS;
-      marker.getElement().classList.toggle("is-stale", isStale);
-      // Abu-abu kalau kru belum/sudah tidak "Aktivasi GPS" (bus belum
-      // jalan / sudah selesai jalan) -- warna rute kalau lagi aktif.
-      // Warna diubah langsung di attribute fill SVG-nya, BUKAN bikin
-      // ulang elemen marker, supaya posisi marker yang sudah "pakem"
-      // tidak ikut ke-reset.
-      const el = marker.getElement();
-      const color = loc.isActive ? BUS_INSTANCES[busId].color : "#999999";
-      const farShape = el.querySelector(".bus-marker-icon-far polygon");
-      const nearShape = el.querySelector(".bus-marker-icon-near circle");
-      if (farShape) farShape.setAttribute("fill", color);
-      if (nearShape) nearShape.setAttribute("fill", color);
-      // Putar ikon sesuai arah jalan bus, kalau datanya ada. Pakai
-      // marker.setRotation() (API resmi MapLibre), BUKAN set style.transform
-      // manual -- transform di elemen marker juga dipakai MapLibre buat
-      // naruh posisinya, kalau ditimpa manual posisinya bisa geser.
-      if (loc.heading != null) {
-        marker.setRotation(loc.heading);
-      }
-    }
-
-    updateBusMarkerVisibility();
-    refreshRouteDetailBusBadgesIfOpen();
-
-    // Tombol "cari bus" cuma ada gunanya kalau minimal 1 bus punya posisi
-    // DAN lagi ditampilin (nggak ke-filter sama rute/arah yang aktif).
-    if (Object.values(busMarkers).some((m) => m.getElement().style.display !== "none")) {
-      document.getElementById("locateBusBtn").style.display = "flex";
-    } else {
-      document.getElementById("locateBusBtn").style.display = "none";
-    }
-  } catch (err) {
-    // Sengaja cuma di-log, bukan ditampilkan ke user -- kegagalan poll
-    // sesekali (misal bot lagi redeploy) nggak perlu mengganggu peta.
-    console.error("Gagal memuat lokasi bus:", err);
-  }
-}
-
-function locateBuses() {
-  const coords = Object.values(busMarkers).map((m) => m.getLngLat());
-  if (coords.length === 0) return;
-
-  if (coords.length === 1) {
-    map.flyTo({ center: coords[0], zoom: Math.max(map.getZoom(), 15) });
-    return;
-  }
-  const lons = coords.map((c) => c.lng);
-  const lats = coords.map((c) => c.lat);
-  map.fitBounds(
-    [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]],
-    { padding: 80, maxZoom: 16 }
-  );
-}
-
-pollBusLocations();
-setInterval(pollBusLocations, BUS_POLL_INTERVAL_MS);
-
-// ---------------------------------------------------------------------------
-// Live bus markers -- Armada Smart Campus UGM (5 bus kampus, Bus A-E).
-// Sumber data: WebSocket UGM hasil reverse engineering, TAPI browser di
-// sini TIDAK connect langsung ke wss://armada.smartcampus.ugm.ac.id --
-// lewat proxy /api/armada-ugm (lihat api/armada-ugm.js) yang jadi WS
-// client-nya, supaya:
-//   1. Tidak tergantung origin/CORS/WebSocket policy server UGM ngizinin
-//      domain kita atau tidak (lihat README section 15).
-//   2. Frontend cukup fetch() JSON biasa, pola pollingnya sama persis
-//      seperti pollBusLocations() SiBulan di atas -- gampang dirawat
-//      bareng.
-//
-// Reuse dari blok SiBulan di atas: TRIANGLE_ICON_SVG, BUS_ICON_SVG (ikon
-// sama), updateBusMarkerZoomLevel (baca map.getZoom(), generik, tidak
-// spesifik SiBulan).
-//
-// BELUM ada: mapping bus ini jalan di rute Transgama yang mana (arah/leg),
-// jadi TIDAK ada filter arah kayak busShouldBeVisible() SiBulan -- kelima
-// bus ditampilkan bareng selama "Armada UGM" kepilih / tidak ada rute
-// dibuka. Device ID -> nama bus (Bus A-E) juga hasil reverse engineering,
-// belum dikonfirmasi resmi -- lihat README_Reverse_Engineering_GPS_Armada_UGM.md.
-// ---------------------------------------------------------------------------
-
-const ARMADA_UGM_API_URL = "/api/armada-ugm";
-const ARMADA_UGM_POLL_INTERVAL_MS = 5000;
-// Sama seperti BUS_STALE_AFTER_MS SiBulan -- marker dipudarkan (is-stale),
-// bukan dihilangkan, kalau lama tidak ada update baru.
-const ARMADA_UGM_STALE_AFTER_MS = 2 * 60 * 1000;
-
-const ARMADA_UGM_COLOR = ROUTE_META["Armada UGM"].color;
-// Key = deviceid dari WebSocket UGM (lihat api/armada-ugm.js untuk mapping
-// ke nama). Label di sini dipakai buat popup saja.
-const ARMADA_UGM_INSTANCES = {
-  "4":  { label: "Bus A" },
-  "11": { label: "Bus B" },
-  "8":  { label: "Bus C" },
-  "10": { label: "Bus D" },
-  "9":  { label: "Bus E" },
-};
-
-let armadaUgmMarkers = {}; // { "4": maplibregl.Marker, ... } key = deviceid
-let armadaUgmLatestLoc = {};
-let armadaUgmPopup = null; // 1 popup kebuka dalam satu waktu, terpisah dari busPopup SiBulan
-// deviceId yang popup-nya lagi kebuka -- null kalau tidak ada. Dipakai
-// pollArmadaUgmLocations() buat tau popup mana yang perlu ikut digeser
-// tiap tick, supaya popup tidak "ketinggalan" saat marker-nya sudah
-// pindah ke posisi baru (bug: dulu popup cuma di-setLngLat SEKALI pas
-// dibuka, tidak pernah di-update lagi walau bus-nya terus jalan).
-let armadaUgmPopupDeviceId = null;
-
-function armadaUgmMarkerHtml(deviceId) {
-  return `
-    <div class="bus-marker" data-armada-ugm-id="${deviceId}">
-      <div class="bus-marker-icon-far">${TRIANGLE_ICON_SVG(ARMADA_UGM_COLOR)}</div>
-      <div class="bus-marker-icon-near">${BUS_ICON_SVG(ARMADA_UGM_COLOR)}</div>
-    </div>
-  `;
-}
-
-// Hapus SEMUA elemen popup Armada UGM dari DOM secara paksa, bukan cuma
-// andalkan variabel armadaUgmPopup. Ditemukan lewat testing: klik icon bus
-// berkali-kali bisa bikin beberapa popup numpuk di posisi berbeda-beda
-// (armadaUgmPopup.remove() doang ternyata tidak selalu cukup reliable buat
-// nyingkirin instance sebelumnya) -- kelihatan kayak "icon floating/drift"
-// padahal itu kartu popup yang ketinggalan, bukan icon bus-nya sendiri.
-function removeAllArmadaUgmPopups() {
-  document.querySelectorAll(".armada-ugm-popup").forEach((el) => el.remove());
-}
-
-function armadaUgmPopupHtml(deviceId) {
-  const { label } = ARMADA_UGM_INSTANCES[deviceId];
-  const loc = armadaUgmLatestLoc[deviceId];
-  // Math.max(0, ...) -- tanpa ini kadang muncul "-1s lalu" kalau jam
-  // server (tempat updatedAt di-set, lihat api/armada-ugm.js) sedikit
-  // lebih cepat dari jam device -- bukan bug data, cuma clock skew biasa,
-  // tapi kelihatan aneh kalau dibiarkan minus.
-  const updatedText = loc ? `${Math.max(0, Math.round((Date.now() - loc.updatedAt) / 1000))}s lalu` : "-";
-  return `
-    <div class="glass-tag">
-      <div class="tag-eyebrow">Bus</div>
-      <div class="popup-title bus-popup-title">
-        <span class="route-badge" style="color:${ARMADA_UGM_COLOR}; background:${ARMADA_UGM_COLOR}22; border-color:${ARMADA_UGM_COLOR}55;">Armada UGM</span>
-        <span>${label}</span>
-      </div>
-      <div class="popup-routes">
-        <div class="bus-info-row"><span>Updated</span><span>${updatedText}</span></div>
-      </div>
-    </div>
-  `;
-}
-
-function showArmadaUgmPopup(deviceId, coord) {
-  removeAllArmadaUgmPopups(); // paksa bersih -- lihat catatan di removeAllArmadaUgmPopups()
-  // Struktur .glass-tag/.tag-eyebrow/.popup-title sama seperti popup bus
-  // SiBulan & popup halte -- lihat komentar di showBusInfoPopup soal
-  // kenapa disamakan persis.
-  armadaUgmPopup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, className: "glass-popup armada-ugm-popup", offset: 18 })
-    .setLngLat(coord)
-    .setHTML(armadaUgmPopupHtml(deviceId))
-    .addTo(map);
-  armadaUgmPopupDeviceId = deviceId;
-  // Reset penanda begitu popup ditutup (klik X, atau klik peta kosong
-  // karena closeOnClick) -- supaya pollArmadaUgmLocations() berhenti
-  // nyoba geser popup yang sudah tidak ada.
-  armadaUgmPopup.on("close", () => {
-    if (armadaUgmPopupDeviceId === deviceId) armadaUgmPopupDeviceId = null;
-  });
-}
-
-function ensureArmadaUgmMarker(deviceId, coord) {
-  if (armadaUgmMarkers[deviceId]) {
-    armadaUgmMarkers[deviceId].setLngLat(coord);
-    return armadaUgmMarkers[deviceId];
-  }
-  const wrap = document.createElement("div");
-  wrap.innerHTML = armadaUgmMarkerHtml(deviceId).trim();
-  const el = wrap.firstElementChild;
-
-  el.addEventListener("click", (e) => {
-    e.stopPropagation();
-    showArmadaUgmPopup(deviceId, armadaUgmMarkers[deviceId].getLngLat());
-  });
-
-  const marker = new maplibregl.Marker({ element: el, anchor: "center", rotationAlignment: "map" })
-    .setLngLat(coord)
-    .addTo(map);
-  armadaUgmMarkers[deviceId] = marker;
-  updateBusMarkerZoomLevel(marker); // fungsi generik dari blok SiBulan, cuma baca map.getZoom()
-  return marker;
-}
-
-map.on("zoom", () => {
-  Object.values(armadaUgmMarkers).forEach(updateBusMarkerZoomLevel);
-});
-
-// Tidak ada konsep arah/leg buat armada ini (lihat catatan di atas), jadi
-// visibility-nya cuma soal "rute mana yang lagi dibuka", bukan diturunkan
-// dari arah seperti busShouldBeVisible() SiBulan.
-function armadaUgmShouldBeVisible() {
-  const routeId = routeIdFromHash();
-  if (!routeId) return true; // plain view -- tampilkan semua
-  return routeId === "Armada UGM";
-}
-
-function updateArmadaUgmMarkerVisibility() {
-  const visible = armadaUgmShouldBeVisible();
-  for (const marker of Object.values(armadaUgmMarkers)) {
-    marker.getElement().style.display = visible ? "" : "none";
-  }
-}
-
-async function pollArmadaUgmLocations() {
-  try {
-    const res = await fetch(ARMADA_UGM_API_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-
-    for (const deviceId of Object.keys(ARMADA_UGM_INSTANCES)) {
-      const loc = data[deviceId];
-      if (!loc) continue; // device ini belum pernah kirim posisi di payload terakhir
-      armadaUgmLatestLoc[deviceId] = loc;
-
-      const marker = ensureArmadaUgmMarker(deviceId, [loc.lng, loc.lat]);
-      const isStale = Date.now() - loc.updatedAt > ARMADA_UGM_STALE_AFTER_MS;
-      marker.getElement().classList.toggle("is-stale", isStale);
-
-      // Kalau popup bus ini lagi kebuka, ikutkan posisinya + refresh teks
-      // "Updated Xs lalu" -- ini yang benerin bug "popup floating"
-      // (popup ketinggalan di posisi lama saat bus-nya sudah jalan).
-      if (armadaUgmPopup && armadaUgmPopupDeviceId === deviceId) {
-        armadaUgmPopup.setLngLat([loc.lng, loc.lat]).setHTML(armadaUgmPopupHtml(deviceId));
-      }
-    }
-
-    updateArmadaUgmMarkerVisibility();
-  } catch (err) {
-    // Sengaja cuma di-log -- kegagalan poll sesekali (proxy lagi cold
-    // start, atau WS UGM lagi nggak respon) nggak perlu ganggu user.
-    console.error("Gagal memuat lokasi armada UGM:", err);
-  }
-}
-
-pollArmadaUgmLocations();
-setInterval(pollArmadaUgmLocations, ARMADA_UGM_POLL_INTERVAL_MS);
 
 // Wraps a marker's full-detail card together with a small always-available
 // "compact pin" version. Both are rendered every time; CSS (driven by the
