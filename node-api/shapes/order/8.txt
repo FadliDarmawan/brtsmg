@@ -45,7 +45,7 @@ Kelurahan Kembangarum [Utara]
 Simpang Muradi [Barat]
 PTUN [Barat]
 Kejari [Barat]
-Cakrawala 1 [Utara]
+Cakrawala [Utara]
 Karangayu [Utara]
 Amarta [Utara]
 BRI Indraprasta
@@ -54,15 +54,15 @@ SPBU Indraprasta
 Pierre Tendean
 Balaikota
 RS Hermina Pandanaran
-Agusta [Utara]
+Agusta
 Gramedia Pandanaran [Utara]
 Simpang Lima
 Gramedia Pandanaran [Selatan]
-DKK Pandanaran [Selatan]
+DKK Pandanaran
 Pasar Bulu [Selatan]
 ADA Siliwangi [Selatan]
 Karangayu [Selatan]
-Cakrawala 2 [Selatan]
+Cakrawala [Selatan]
 Kejari [Timur]
 PTUN [Timur]
 Simpang Muradi [Timur]

@@ -12,7 +12,7 @@ Gang Lima Puntan [Timur]
 Puntan [Utara]
 Salakan [Utara]
 Wisma Husnul Khatimah [Utara]
-Muntal [Timur]
+Muntal [Utara]
 Masjid Baiturrohim Muntal
 Mbibis
 Gang Jetis
@@ -45,7 +45,7 @@ Gang Adem
 Gang Gumuk Sari
 SDIT Mutiara Hati
 Pertigaan Muntal
-Muntal [Barat]
+Muntal [Selatan]
 Wisma Husnul Khatimah [Selatan]
 Salakan [Selatan]
 Puntan [Selatan]

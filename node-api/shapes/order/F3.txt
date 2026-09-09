@@ -23,7 +23,7 @@ Tlogosari 1 Banjarsari [Selatan]
 Banjarsari Selatan [Barat]
 Simpang Unpand
 Sirojudin
-SDN Sekaran 01
+Polines
 SPBU Undip
 SDN Pedalangan 02
 Ruko Banjarsari
@@ -56,8 +56,8 @@ Alam Permai [Utara]
 Klipang Pesona Asri 1 [Utara]
 Klipang Golf [Timur]
 SDN Sendangmulyo 04 [Timur]
-Indomaret Klipang [Timur]
-Bundaran Klipang [Timur]
+Indomaret Klipang
+Bundaran Klipang
 SDN Sendangmulyo 04 [Barat]
 Klipang Golf [Barat]
 Jembatan Blancir [Utara]
@@ -78,7 +78,7 @@ Mahoni [Barat]
 Kelapa Sawit [Utara]
 RSIA Plamongan Indah
 Perbatasan Semarang Demak [Selatan]
-Bitratex [Selatan]
+Bitratex
 SDN Plamongansari 01 [Selatan]
 Rusun Plamongansari [Timur]
 Perum Gardenia Plamongan [Timur]

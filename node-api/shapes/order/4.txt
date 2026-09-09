@@ -33,7 +33,7 @@ Krapyak [Utara]
 Pengadilan [Utara]
 Muradi [Utara]
 Kalibanteng [Utara]
-Cakrawala 1 [Utara]
+Cakrawala [Utara]
 Karangayu [Utara]
 Amarta [Utara]
 ADA Siliwangi [Utara]
@@ -42,9 +42,9 @@ Imam Bonjol
 Pierre Tendean
 Balaikota
 RS Hermina Pandanaran
-Agusta [Utara]
+Agusta
 Gramedia Pandanaran [Utara]
-Simpang Lima [Utara]
+Simpang Lima
 Tentrem
 Lombok Idjo
 SMK Theresiana
@@ -62,14 +62,14 @@ Posis
 Raden Patah
 RS Panti Wilasa Dr. Cipto
 SMKN 1
-Pasar Langgar
+Pasar Langgar [Selatan]
 Sekolah Mataram
 Dargo
 Taman MT Haryono
 Jurnatan
 Agus Salim
 Aloon-Aloon Semarang
-Unaki Petek
+Unaki Petek [Selatan]
 Stasiun Semarang Poncol [Selatan]
 Abimanyu [Timur]
 Pierre Tendean
@@ -78,7 +78,7 @@ Pasar Bulu [Selatan]
 ADA Siliwangi [Selatan]
 Amarta [Selatan]
 Karangayu [Selatan]
-Cakrawala 2 [Selatan]
+Cakrawala [Selatan]
 Kalibanteng [Selatan]
 Muradi [Selatan]
 Pengadilan [Selatan]

@@ -13,7 +13,7 @@ Kesatrian [Barat]
 Don Bosko [Barat]
 Akpol [Barat]
 Kagok [Barat]
-Taman Diponegoro [Barat]
+Taman Diponegoro
 Elisabeth
 Kagok [Barat]
 Wonotingal
@@ -28,7 +28,7 @@ Semeru Barat [Timur]
 Taman Semeru [Utara]
 Taman Telaga Bodas [Utara]
 Kesatrian [Timur]
-PDAM Jatingaleh [Timur]
+PDAM Jatingaleh
 PLN Kesatrian
 Karang Rejo Tengah [Selatan]
 SMA Teuku Umar [Selatan]
@@ -39,12 +39,12 @@ Unisvet [Selatan]
 Akpelni [Selatan]
 Talangsari [Selatan]
 Dewi Sartika [Timur]
-Delik Sari [Barat]
-Puri Sartika [Barat]
-Trangkil [Barat]
-Taman Nirwana [Barat]
-Akbid [Barat]
-Ayodya [Barat]
+Delik Sari [Timur]
+Puri Sartika [Timur]
+Trangkil [Timur]
+Taman Nirwana [Timur]
+Akbid [Timur]
+Ayodya [Timur]
 Indomaret Taman Siswa
 Gang Marga Satwa
 Lapangan Banaran
@@ -61,12 +61,12 @@ Sekere Unnes
 Taman Anggur
 Rektorat Unnes
 Mintorogo
-Ayodya [Timur]
-Akbid [Timur]
-Taman Nirwana [Timur]
-Trangkil [Timur]
-Puri Santika [Timur]
-Delik Sari [Timur]
+Ayodya [Barat]
+Akbid [Barat]
+Taman Nirwana [Barat]
+Trangkil [Barat]
+Puri Santika [Barat]
+Delik Sari [Barat]
 Dewi Sartika [Barat]
 Talangsari [Utara]
 Akpelni [Utara]
@@ -86,7 +86,7 @@ Tengger [Utara]
 Semeru [Utara]
 Akpol [Barat]
 Kagok [Barat]
-Taman Diponegoro [Barat]
+Taman Diponegoro
 Elisabeth
 Kagok [Timur]
 Wonotingal
@@ -96,7 +96,7 @@ Candi
 Akpol [Timur]
 Don Bosko [Timur]
 Kesatrian [Timur]
-PDAM Jatingaleh [Timur]
+PDAM Jatingaleh
 Bukit Sari [Timur]
 Ngesrep [Timur]
 SMPN 27 [Utara]

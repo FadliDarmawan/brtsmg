@@ -68,7 +68,7 @@ Sedes
 Bangkong MT Haryono
 Sidodadi Stadion Diponegoro
 Karangturi Kampung Baris
-Pasar Langgar
+Pasar Langgar [Utara]
 Pasar Burung Karimata [Utara]
 MAJT [Utara]
 Jolotundo [Utara]
@@ -77,10 +77,10 @@ Plewan [Barat]
 SMPN 4 [Barat]
 SMP Muhammadiyah 7 [Selatan]
 Indomaret Tambak Dalam [Selatan]
-Batursari [Utara]
-Panti Asuhan Ikhlasul Amal [Utara]
-Pasar Waru [Utara]
-Masjid Baitul Hidayah [Utara]
+Kampung Batursari [Barat]
+Panti Asuhan Ikhlasul Amal [Barat]
+Pasar Waru [Barat]
+Masjid Baitul Hidayah [Barat]
 Pojok Kaligawe
 Pertigaan Posis
 Kaligawe [Utara]

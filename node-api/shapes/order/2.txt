@@ -8,7 +8,7 @@ Posis
 Raden Patah
 RS Panti Wilasa Dr. Cipto
 SMKN 1
-Pasar Langgar
+Pasar Langgar [Selatan]
 Sekolah Mataram
 Dargo
 Taman MT Haryono
@@ -16,7 +16,7 @@ Jurnatan
 Agus Salim
 Aloon-Aloon Semarang
 Bata Johar [Selatan]
-BCA Pemuda [Selatan]
+BCA Pemuda
 Balaikota
 Katedral
 RS Kariadi [Timur]
@@ -26,9 +26,9 @@ Merapi [Timur]
 Elisabeth
 Kagok [Timur]
 Akpol [Timur]
-Don Bosco [Timur]
+Don Bosko [Timur]
 Kesatrian [Timur]
-PDAM Jatingaleh [Timur]
+PDAM Jatingaleh
 Bukit Sari [Timur]
 Ngesrep [Timur]
 Tembalang
@@ -40,17 +40,17 @@ Terminal Banyumanik [Timur]
 Makodam [Timur]
 SDN Pudakpayung 01 [Timur]
 BPK [Timur]
-Taman Unyil
+Taman Unyil [Timur]
 PT Mas
 Assalamah
 Pasar Bandarjo
 Alun-Alun Ungaran
 Terminal Sisemut
-Taman Unyil
+Taman Unyil [Barat]
 Pramuka
-BPK
-SDN Pudakpayung 01
-Makodam
+BPK [Barat]
+SDN Pudakpayung 01 [Barat]
+Makodam [Barat]
 Terminal Banyumanik [Barat]
 Transmart Setiabudi [Barat]
 Sukun [Barat]
@@ -63,7 +63,7 @@ Kesatrian [Barat]
 Don Bosko [Barat]
 Akpol [Barat]
 Kagok [Barat]
-Taman Diponegoro [Barat]
+Taman Diponegoro
 Merapi [Barat]
 Taman Gajahmungkur [Selatan]
 Ngaglik [Barat]
@@ -81,7 +81,7 @@ KAI Terrace
 Pengapon
 Penjaringan
 Pertigaan Posis
-Kaligawe
+Kaligawe [Utara]
 Kampoeng Semarang [Utara]
 Kampung Tenggang [Utara]
 LIK [Utara]
