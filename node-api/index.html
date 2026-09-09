@@ -200,6 +200,13 @@
   }
   .tag-eyebrow svg { width: 11px; height: 11px; opacity: 0.7; }
 
+  /* Badge nunjukin transfer gratis di sini (lihat kolom Transit di excel
+     & TRANSIT_STOP_NAMES/findStopPath) -- dipake di dua tempat: popup peta
+     (.tag-eyebrow, udah uppercase) dan panel Stop information
+     (#stop-info-eyebrow, gak uppercase) -- jadi warna/bold-nya yang bikin
+     dia menonjol, bukan gandain text-transform. */
+  .transit-flag { color: #1d8a4a; font-weight: 800; }
+
   .popup-title {
     font-weight: 700; font-size: 17px; letter-spacing: -0.01em;
     color: #1c1c1a; margin-bottom: 9px; line-height: 1.2;
@@ -1081,6 +1088,8 @@ async function loadStops() {
       idx,
       name: s.stop_name,
       lat, lon,
+      rambu_halte: s.rambu_halte || null, // 'halte' | 'rambu' | null -- fisik titiknya, bukan per-rute
+      transit: !!s.transit,               // true -> transfer di sini gratis (lihat TRANSIT_STOP_NAMES & findStopPath)
       routes: [...new Set(services.map(sv => sv.route))],
       services
     };
@@ -2957,6 +2966,7 @@ map.on("load", async () => {
   });
 
   buildStopGraph();
+  buildTransitStopNames();
   applyHash();
 
   // ---- Cartography embed mode --------------------------------------
@@ -3975,7 +3985,7 @@ window.openStopInfoPanel = function (stopName) {
       return dests.map(d => `<div class="stop-info-row">${badge}<span class="stop-info-dest">${getStopDisplay(d.name).base}</span></div>`);
     }).join("");
 
-  stopInfoEyebrow.textContent = "Rambu";
+  stopInfoEyebrow.innerHTML = `${stopEntry.rambu_halte === "halte" ? "Halte" : "Rambu"}${stopEntry.transit ? ` &middot; <span class="transit-flag">Transit</span>` : ""}`;
   stopInfoTitle.innerHTML = stopTitleHtml(stopName);
   stopInfoList.innerHTML = rows;
   stopInfoDestBtn.dataset.stop = stopName;
@@ -4784,6 +4794,7 @@ function showPopup(coords, name, services) {
   stopHoverPopup.remove();
   if (stopInfoPanel) stopInfoPanel.style.display = "none";
   if (!Array.isArray(services)) services = [];
+  const stopEntry = STOPS.find(s => s.name === name);
   setActiveSegment(null);
   setBeforeSegment(null);
   setRouteDimming(null);
@@ -4861,7 +4872,7 @@ function showPopup(coords, name, services) {
     .setLngLat(coords)
     .setHTML(`
       <div class="glass-tag">
-        <div class="tag-eyebrow">Rambu</div>
+        <div class="tag-eyebrow">${stopEntry && stopEntry.rambu_halte === "halte" ? "Halte" : "Rambu"}${stopEntry && stopEntry.transit ? ` &middot; <span class="transit-flag">Transit</span>` : ""}</div>
         <div class="popup-title">${stopTitleHtml(name)}</div>
         ${scheduleNote}
         ${timetableNote}
@@ -5055,6 +5066,20 @@ function buildStopGraph() {
 // at the cost of a longer ride.
 const TRANSFER_PENALTY_METERS = 1200;
 
+// Halte yang ditandai Transit (kolom "Transit" di excel) -- transfer di
+// sini gratis/gak perlu bayar lagi (beda platform/bus tapi masih satu
+// "kawasan" transit resmi), jadi penaltinya JAUH lebih murah daripada
+// transfer biasa. Ini bukan bikin transfer gratis "wajib" dipilih apapun
+// jaraknya -- cuma bikin Dijkstra condong ke rute yang transfer-nya jatuh
+// di halte Transit KETIMBANG rute lain yang jaraknya mirip tapi transfer
+// di halte biasa (bayar 2x). Di-build sekali aja (Set, bukan dicari linear
+// tiap iterasi Dijkstra -- STOPS bisa 1000+ entries).
+let TRANSIT_STOP_NAMES = new Set();
+function buildTransitStopNames() {
+  TRANSIT_STOP_NAMES = new Set(STOPS.filter(s => s.transit).map(s => s.name));
+}
+const TRANSIT_TRANSFER_PENALTY_METERS = 150;
+
 // Dijkstra over STOP_GRAPH, but the search STATE is (stop, arrival route)
 // rather than just (stop). That's what lets the transfer penalty apply
 // exactly where a transfer actually happens — i.e. only when the next
@@ -5102,9 +5127,15 @@ function findStopPath(fromName, toName) {
     for (const edge of (STOP_GRAPH.get(u) || [])) {
       if (arrivalCoord && haversine(arrivalCoord, edge.coords[0]) > MAX_SAME_NAME_HOP_METERS) continue;
       // Boarding the very first bus (viaRoute === NONE) is never a
-      // "transfer" — only a route change mid-trip is.
+      // "transfer" — only a route change mid-trip is. Kalau transfer-nya
+      // jatuh di halte yang ditandai Transit (u = halte tempat transfer
+      // kejadian), penaltinya jauh lebih murah -- lihat komentar
+      // TRANSIT_STOP_NAMES di atas.
       const isTransfer = viaRoute !== NONE && viaRoute !== edge.routeId;
-      const nd = d + edge.weight + (isTransfer ? TRANSFER_PENALTY_METERS : 0);
+      const transferPenalty = !isTransfer ? 0
+        : TRANSIT_STOP_NAMES.has(u) ? TRANSIT_TRANSFER_PENALTY_METERS
+        : TRANSFER_PENALTY_METERS;
+      const nd = d + edge.weight + transferPenalty;
       const nkey = edge.to + "|" + edge.routeId;
       if (nd < (dist.get(nkey) ?? Infinity)) {
         dist.set(nkey, nd);
@@ -5268,13 +5299,23 @@ function resetPlannerHighlight() {
 
 function renderItinerary(legs, totalDistance) {
   const km = (totalDistance / 1000).toFixed(1);
-  const stepsHtml = legs.map(leg => {
+  const stepsHtml = legs.map((leg, i) => {
     const meta = ROUTE_META[leg.routeId] || {};
-    return `<div class="planner-step">
+    const stepHtml = `<div class="planner-step">
       <span class="route-badge" style="color:${meta.color || "#888"};background:${meta.color || "#888"}22;border-color:${meta.color || "#888"}55;">${leg.routeId}</span>
       <span>${getStopDisplay(leg.from).base} &rarr; ${getStopDisplay(leg.to).base}</span>
     </div>`;
-  }).join(`<div class="planner-transfer">transfer</div>`);
+    // Transfer point antara leg ini & leg berikutnya = leg.to (halte yang
+    // sama tempat leg berikutnya dimulai) -- kalau ditandai Transit,
+    // pasang badge biar keliatan ini transfer gratis, bukan transfer
+    // biasa yang bayar 2x.
+    const isLast = i === legs.length - 1;
+    const transferHtml = isLast ? "" :
+      TRANSIT_STOP_NAMES.has(leg.to)
+        ? `<div class="planner-transfer planner-transfer-free">transfer &middot; <span class="transit-flag">gratis di sini</span></div>`
+        : `<div class="planner-transfer">transfer</div>`;
+    return stepHtml + transferHtml;
+  }).join("");
   const busWord = legs.length === 1 ? "bus" : "buses";
   return `<div class="planner-summary">${legs.length} ${busWord} &middot; ~${km} km</div>${stepsHtml}`;
 }

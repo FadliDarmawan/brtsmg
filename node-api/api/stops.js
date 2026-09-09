@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
     }
 
     const { rows } = await pool.query(`
-      SELECT point, stop_name, services
+      SELECT point, stop_name, rambu_halte, transit, services
       FROM v_stops_api
       ORDER BY stop_name
     `);
