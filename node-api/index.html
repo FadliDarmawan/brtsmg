@@ -2921,18 +2921,37 @@ map.on("load", async () => {
     map.getCanvas().style.cursor = "";
     stopHoverPopup.remove();
   });
+  // Klik/hover di layer stops-circle bisa "ngenain" lebih dari 1 dot kalau
+  // posisinya deket banget (platform [Utara]/[Selatan]/[Timur]/[Barat] dkk
+  // sering cuma beberapa meter -- hit-radius circle-nya overlap di zoom
+  // tertentu). e.features[0] itu urutan RENDER (z-order), BUKAN urutan
+  // jarak ke titik klik -- jadi bisa balikin dot yang BUKAN yang keliatan
+  // diklik mata, bikin "Plan a trip" kadang milih platform yang salah
+  // (Utara kepilih padahal yang diklik Selatan, dst). Pilih yang
+  // koordinatnya paling deket ke titik klik asli (e.lngLat), bukan
+  // percaya urutan e.features begitu aja.
+  function nearestClickedFeature(e) {
+    if (!e.features || !e.features.length) return null;
+    if (e.features.length === 1) return e.features[0];
+    const clickPoint = [e.lngLat.lng, e.lngLat.lat];
+    return e.features.reduce((best, f) =>
+      haversine(clickPoint, f.geometry.coordinates) < haversine(clickPoint, best.geometry.coordinates) ? f : best
+    );
+  }
+
   // mousemove (not mouseenter) so the tooltip keeps re-targeting as the
   // cursor drifts across adjacent/overlapping stop dots without ever
   // leaving the layer's hit area -- mouseenter only fires once on
   // entering the layer as a whole, not per-feature.
   map.on("mousemove", "stops-circle", (e) => {
-    const f = e.features[0];
+    const f = nearestClickedFeature(e);
     if (!f || window.pickMode) return; // don't clutter the map while picking a planner stop
     stopHoverPopup.setLngLat(f.geometry.coordinates).setHTML(stopTitleHtml(f.properties.name)).addTo(map);
   });
 
   map.on("click", "stops-circle", (e) => {
-    const f = e.features[0];
+    const f = nearestClickedFeature(e);
+    if (!f) return;
     if (window.pickMode) {
       setPlanStop(window.pickMode, f.properties.name);
       window.pickMode = null;
