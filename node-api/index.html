@@ -5038,6 +5038,14 @@ function addEdge(from, to, routeId, weight, coords) {
 function buildStopGraph() {
   STOP_GRAPH = new Map();
   window.STOP_GRAPH = STOP_GRAPH; // re-sync: reassigned above, not just mutated
+  // Nama halte yang MASIH VALID di STOPS terkini -- dipake buat mutusin
+  // apa nama dari shape.stopIndex (hasil pencocokan build-route-shapes.js,
+  // berdasarkan NAMA persis) masih bisa dipercaya, atau perlu fallback ke
+  // nearestStopName (berdasarkan KOORDINAT). Lihat komentar panjang di
+  // bawah kenapa urutan prioritas ini penting -- kebalik bisa bikin
+  // platform [Utara]/[Selatan] ketuker di rekomendasi transit.
+  const validStopNames = new Set(STOPS.map(s => s.name));
+
   for (const routeId of Object.keys(ROUTE_SHAPES)) {
     const shape = ROUTE_SHAPES[routeId];
     // [name, vertex] pairs, in travel order (every route's shape is one
@@ -5056,7 +5064,18 @@ function buildStopGraph() {
 
     const resolved = entries.map(([name, vertex]) => ({
       vertex,
-      canonical: nearestStopName(shape.coordinates[vertex]) || name
+      // PRIORITAS: nama asli dari stopIndex (build-route-shapes.js udah
+      // mastiin ini match berdasarkan NAMA, bukan nebak dari koordinat).
+      // nearestStopName cuma dipanggil sebagai FALLBACK kalau nama itu
+      // udah gak ada lagi di STOPS (misal halte itu di-rename/di-merge-
+      // ulang setelah shape file ini terakhir di-build) -- BUKAN sebagai
+      // sumber utama. Sebelumnya kebalik (coordinate-lookup duluan), dan
+      // itu yang bikin platform [Utara]/[Selatan]/[Timur]/[Barat] yang
+      // jaraknya cuma belasan-puluhan meter sering ketuker: nearestStopName
+      // nyari radius 60m, hampir selalu nemu KEDUANYA sebagai kandidat,
+      // terus pilih yang mana aja yang kebetulan lebih deket ke vertex
+      // (yang sendirinya udah punya offset dari posisi halte asli).
+      canonical: validStopNames.has(name) ? name : (nearestStopName(shape.coordinates[vertex]) || name)
     }));
 
     for (let i = 0; i < resolved.length - 1; i++) {
